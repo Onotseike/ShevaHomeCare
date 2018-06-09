@@ -1,0 +1,87 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+
+<div class="ui violet piled segment">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="ui internally celled grid container">
+        <div class="row">
+            <div class="three wide column"> </div>
+            <div class="ten wide column">
+                <section>
+                    <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="ui form">
+                        <h4>Create a new account.</h4>
+                        <hr />
+                        <div asp-validation-summary="All" class="ui error message"></div>
+
+                        <div class="field error">
+                            <label asp-for="FirstName"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+
+                        <div class="field error">
+                            <label asp-for="LastName"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+
+                        <div class="field">
+                            <label asp-for="OtherNames"></label>
+                            <input asp-for="OtherNames" class="form-control" />
+                            <span asp-validation-for="OtherNames" class="text-danger"></span>
+                        </div>
+
+                        <div class="field error">
+                            <label asp-for="UserName"></label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="field error">
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="field error">
+                            <label asp-for="Password"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="field error">
+                            <label asp-for="ConfirmPassword"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="field error">
+                            <label asp-for="UserType"></label>
+                            <select class="ui dropdown" asp-for="UserType">
+                                
+                                <option value="@ShevaUserType.Patient">Patient</option>
+                                <option value="@ShevaUserType.CareGiver">Care Giver</option>
+                            </select>
+                            <span asp-validation-for="UserType" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="ui violet button">Register</button>
+                    </form>
+                </section>
+            </div>
+            <div class="three wide column"> </div>
+        </div>
+      
+    </div>
+
+</div>
+
+
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

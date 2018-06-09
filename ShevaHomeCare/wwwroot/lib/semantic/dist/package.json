@@ -1,0 +1,20 @@
+{
+  "author": "Jack Lukic <jack@semantic-ui.com>",
+  "bugs": {
+    "url": "https://github.com/Semantic-Org/Semantic-UI/issues"
+  },
+  "dependencies": {
+    "jquery": "x.*"
+  },
+  "description": "CSS Only distribution of Semantic UI",
+  "homepage": "http://www.semantic-ui.com",
+  "license": "MIT",
+  "main": "semantic.js",
+  "name": "semantic-ui-css",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Semantic-Org/Semantic-UI-CSS.git"
+  },
+  "title": "Semantic UI",
+  "version": "2.3.1"
+}
