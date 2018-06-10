@@ -1,7 +1,97 @@
-﻿@{
-    ViewData["Title"] = "About";
-}
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+﻿@*@model*@
 
-<p>Use this area to provide additional information.</p>
+@using Microsoft.AspNetCore.Identity
+@using ShevaHomeCare.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<ApplicationUserRoles> RoleManager
+@inject ShevaHCRepo ShevaHcRepo
+
+
+
+
+@{
+    ViewData["Title"] = "Main DashBoard";
+    var user = ShevaHcRepo.GetUser(User);
+    var userRole = ShevaHcRepo.GetUserRole(user);
+    var kabanData = ShevaHcRepo.GetAllKabanItems();
+}
+
+<div class="ui violet piled segment container">
+    <h2>@ViewData["Title"]</h2>
+    <h3>@ViewData["Message"]</h3>
+</div>
+
+
+@if (userRole == "Patient")
+{
+    <div class="ui internally celled grid inverted menu">
+        <div class="item row">
+            <div class="twelve wide column">
+                <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource">
+                    <e-kanbancolumns>
+                        <e-kanbancolumn header-text="Back Log"></e-kanbancolumn>
+                        <e-kanbancolumn header-text="In Progress"></e-kanbancolumn>
+                        <e-kanbancolumn header-text="Done"></e-kanbancolumn>
+                    </e-kanbancolumns>
+                </ej-kanban>
+            </div>
+            <div class="four wide column">
+                <div class="row">
+                    <p>Links to mental Health exercises</p>
+                </div>
+                <div class="row">
+                    <p>Links to physical Health exercises</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+else
+{
+    <div class="ui internally celled grid inverted menu">
+        <div class="item row">
+            <div class="twelve wide column">
+                <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource">
+                    <e-kanbancolumns>
+                        <e-kanbancolumn header-text="Back Log"></e-kanbancolumn>
+                        <e-kanbancolumn header-text="In Progress"></e-kanbancolumn>
+                        <e-kanbancolumn header-text="Done"></e-kanbancolumn>
+                    </e-kanbancolumns>
+                </ej-kanban>
+            </div>
+            <div class="four wide column">
+                <div class="row">
+                    <div class="ui card">
+                        <div class="card">
+                            <div class="blurring dimmable image">
+                                <div class="ui dimmer">
+                                    <div class="content">
+                                        <div class="center">
+                                            <div class="ui inverted button">
+                                                Add A Patient
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <img class="ui medium circular image" src="images/jenny.jpg"/>
+                            </div>
+                            
+                            <div class="ui bottom attached button">
+                                <i class="add icon"></i>
+                                Add Friend
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+

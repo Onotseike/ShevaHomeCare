@@ -35,7 +35,8 @@ namespace ShevaHomeCare
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
-
+            services.AddTransient<IShevaHCRepo, ShevaHCRepo>();
+            services.AddTransient<ShevaHCRepo>();
             services.AddMvc();
         }
 

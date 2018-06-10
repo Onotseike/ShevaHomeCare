@@ -1,0 +1,118 @@
+{
+  "_args": [
+    [
+      "syncfusion-javascript@16.1.37",
+      "D:\\onots\\source\\repos\\ShevaHC\\ShevaHC"
+    ]
+  ],
+  "_from": "syncfusion-javascript@16.1.37",
+  "_id": "syncfusion-javascript@16.1.37",
+  "_inCache": true,
+  "_location": "/syncfusion-javascript",
+  "_nodeVersion": "4.4.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/syncfusion-javascript_16.1.37_1524638279431_0.8077325799318553"
+  },
+  "_npmUser": {
+    "email": "packages@syncfusion.com",
+    "name": "syncfusion-javascript"
+  },
+  "_npmVersion": "4.0.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "syncfusion-javascript",
+    "raw": "syncfusion-javascript@16.1.37",
+    "rawSpec": "16.1.37",
+    "scope": null,
+    "spec": "16.1.37",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/syncfusion-javascript/-/syncfusion-javascript-16.1.37.tgz",
+  "_shasum": "80cd07f228fb8651dcaf1ce17626059800bd0610",
+  "_shrinkwrap": null,
+  "_spec": "syncfusion-javascript@16.1.37",
+  "_where": "D:\\onots\\source\\repos\\ShevaHC\\ShevaHC",
+  "author": {
+    "name": "Syncfusion Inc"
+  },
+  "bugs": {
+    "url": "https://github.com/syncfusion/JavaScript-Widgets/issues"
+  },
+  "dependencies": {
+    "jquery": "*",
+    "jquery-validation": "*",
+    "jsrender": "*",
+    "syncfusion-ej-global": "*"
+  },
+  "description": "Npm package of Syncfusion.JavaScript.",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "fileCount": 500,
+    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJa4CJICRA9TVsSAnZWagAA8xkP/imNtwLxT6nigwkMBCpw\nfSCOOs/u/ITvAWSQ6gWkvox1c5iMqH97+VltVRYZVhSk2ZfocjwIjR1E9leu\nbtWOiwsSQJuQWxSxvKcoFajiVenUWunfy8h3ub/Je1VVSNrY2y6/dYAxMZCQ\ncMcbbiqXchxcFYpZs1cupjSalUy7lOTks6qQZ3E9jNyuvLhuqPN4O2+R3awl\nePd/FuOPjL+vIOTxoDGYCai9B4+hN1CV4rJkec5zZrZ5A4VRHjkS+u8P60nf\nXLr2vuFsIkOZie7tGr4xcUhDeNRdqCwsNBBAGs6b2tZo4Z0JCOxc/EbFwaQf\nOr9swO5Q8uoEAGJ/6fVnY5uwlFXSpEklOVcohku8KXdcwgJdnS6AonUBB8AO\nGxaID/rF0lY7iLjJsPUk9o66UZZRico3MqIrggfL1PDZm1Pwm4TWiMjBjTot\n97lj1NsgsoDKKRoYgHlgjr3+Q/KBOfca8pZYkRhJd0aDtuThJLR6YCLAHQsY\nIZeUOpSOtpxQ0uaEjDTtvevKOdaClxu1qFIIGEzMAlNI1Q3VKl0Sy7Z34kV5\nYBmbrJhj7tAYWz44B6HBJ4TLeq2F/81dm/n0+nDrPo3PINTSgIfgLfepExxG\nbtc2B55lo0E55KBr0G+YhhgpGVfyfPSNoCwN5ORroJBEfa0vIW77mN7px+RJ\n93pD\r\n=DcHC\r\n-----END PGP SIGNATURE-----\r\n",
+    "shasum": "80cd07f228fb8651dcaf1ce17626059800bd0610",
+    "tarball": "https://registry.npmjs.org/syncfusion-javascript/-/syncfusion-javascript-16.1.37.tgz",
+    "unpackedSize": 77708796
+  },
+  "files": [
+    "Content/",
+    "Scripts/"
+  ],
+  "gitHead": "8d0e35d8779434bb40c11269453c632f91ed5b73",
+  "homepage": "https://github.com/syncfusion/JavaScript-Widgets#readme",
+  "installable": true,
+  "jspm": {
+    "dependencies": {
+      "jquery": "*",
+      "jquery-validation": "*",
+      "jsrender": "*",
+      "syncfusion-ej-global": "*"
+    },
+    "files": [
+      "Content",
+      "Scripts"
+    ],
+    "format": "amd",
+    "ignore": [
+      "Scripts/common/ej.unobtrusive.min.js",
+      "Scripts/common/ej.unobtrusive.min.map",
+      "Scripts/common/ej.webform.min.js",
+      "Scripts/common/ej.webform.min.map",
+      "Scripts/common/ej.widget.angular.min.js",
+      "Scripts/common/ej.widget.angular.min.map",
+      "Scripts/common/ej.widget.ko.min.js",
+      "Scripts/common/ej.widget.ko.min.map",
+      "Scripts/ej.widgets.all*.js",
+      "Scripts/ej.widgets.all.min.map",
+      "Scripts/web/ej.web.all*.js",
+      "Scripts/web/ej.web.all.min.map"
+    ],
+    "main": false,
+    "registry": "npm"
+  },
+  "keywords": [
+    "ej",
+    "essential",
+    "javascript",
+    "syncfusion"
+  ],
+  "license": "SEE LICENSE IN README.md",
+  "maintainers": [
+    {
+      "name": "syncfusion-javascript",
+      "email": "abbask@syncfusion.com"
+    }
+  ],
+  "name": "syncfusion-javascript",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syncfusion/JavaScript-Widgets.git"
+  },
+  "scripts": {},
+  "version": "16.1.37"
+}
