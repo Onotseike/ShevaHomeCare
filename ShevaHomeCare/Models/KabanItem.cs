@@ -12,6 +12,7 @@ namespace ShevaHomeCare.Models
 
     public class KabanItem
     {
+        public int KabanItemID { get; set; }
 
         public string ItemName { get; set; }
 
