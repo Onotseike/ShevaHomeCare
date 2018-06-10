@@ -22,17 +22,20 @@ namespace ShevaHomeCare.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<ApplicationUserRoles> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationUserRoles> roleManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _emailSender = emailSender;
             _logger = logger;
         }
@@ -61,11 +64,11 @@ namespace ShevaHomeCare.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction("DashBoard", "Home");
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -220,10 +223,54 @@ namespace ShevaHomeCare.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    OtherName = model.OtherNames,
+                    UserName = model.UserName,
+                    Email = model.Email
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var userType = model.UserType;
+
+                    if (userType == ShevaUserType.Patient)
+                    {
+                        if (!_roleManager.RoleExistsAsync("Patient").Result)
+                        {
+                            ApplicationUserRoles role = new ApplicationUserRoles();
+                            role.Name = "Patient";
+                            role.UserType = ShevaUserType.Patient;
+
+                            IdentityResult roleResult = _roleManager.CreateAsync(role).Result;
+
+                            if (!roleResult.Succeeded)
+                            {
+                                ModelState.AddModelError("", "Error While creating Role!");
+                                return View(model);
+                            }
+                        }
+                    }
+                    else if(userType == ShevaUserType.CareGiver)
+                    {
+                        if (!_roleManager.RoleExistsAsync("CareGiver").Result)
+                        {
+                            ApplicationUserRoles role = new ApplicationUserRoles();
+                            role.Name = "CareGiver";
+                            role.UserType = ShevaUserType.CareGiver;
+
+                            IdentityResult roleResult = _roleManager.CreateAsync(role).Result;
+
+                            if (!roleResult.Succeeded)
+                            {
+                                ModelState.AddModelError("", "Error While creating Role!");
+                                return View(model);
+                            }
+                        }
+                    }
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

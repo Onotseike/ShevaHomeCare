@@ -15,14 +15,14 @@ namespace ShevaHomeCare.Controllers
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult DashBoard()
         {
             ViewData["Message"] = "Your application description page.";
 
             return View();
         }
 
-        public IActionResult Contact()
+        public IActionResult CallBoard()
         {
             ViewData["Message"] = "Your contact page.";
 
