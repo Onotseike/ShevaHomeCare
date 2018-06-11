@@ -17,7 +17,9 @@
     var user = ShevaHcRepo.GetUser(User);
     var userRole = ShevaHcRepo.GetUserRole(user);
     var kabanData = ShevaHcRepo.GetAllKabanItems();
-    var kabanItem = new KabanItem();
+   // var kabanItem = new KabanItem();
+    var patientList = UserManager.GetUsersInRoleAsync("Patient").Result; //ShevaHcRepo.GetPatientUsers();
+    
 }
 
 <div class="ui violet piled segment container">
@@ -95,42 +97,51 @@ else
         
         <div class="content">
             <form class="ui form">
-                <div asp-validation-summary="All" class="ui error message"></div>
+                @*<div asp-validation-summary="All" class="ui error message"></div>*@
 
                 <div class="field error">
-                    <label asp-for="@kabanItem.ItemName"></label>
-                    <input asp-for="@kabanItem.ItemName" class="form-control" />
-                    <span asp-validation-for="@kabanItem.ItemName" class="text-danger"></span>
+                    <label>Item Name</label>
+                    <input id="itemName" class="form-control" />
+                    
                 </div>
 
                 <div class="field error">
-                    <label asp-for="@kabanItem.ItemType"></label>
-                    <input asp-for="@kabanItem.ItemType" class="form-control" />
-                    <span asp-validation-for="@kabanItem.ItemType" class="text-danger"></span>
+                    <label>Item Type</label>
+                    <select name="selectItemType" class="ui fluid dropdown" id="itemType">
+                        <option value="@KabanItemType.Drug">Drug</option>
+                        <option value="@KabanItemType.Meal">Meal</option>
+                        <option value="@KabanItemType.Exercise">Exercise</option>
+                        <option value="@KabanItemType.Miscellenous">Miscellaneous</option>
+                    </select>
+                    @*<input asp-for="@kabanItem.ItemType" class="form-control" />*@
+                    @*<span asp-validation-for="@kabanItem.ItemType" class="text-danger"></span>*@
                 </div>
 
                 <div class="field error">
-                    <label asp-for="@kabanItem.KabanitemDescription"></label>
-                    <input asp-for="@kabanItem.KabanitemDescription" class="form-control" />
-                    <span asp-validation-for="@kabanItem.KabanitemDescription" class="text-danger"></span>
+                    <label>Kaban Item Description</label>
+                    <input id="itemDescription" class="form-control" />
+                    @*<span asp-validation-for="@kabanItem.KabanitemDescription" class="text-danger"></span>*@
                 </div>
 
                 <div class="field error">
-                    <label asp-for="@kabanItem.PatientName"></label>
-                    <input asp-for="@kabanItem.PatientName" class="form-control" />
-                    <span asp-validation-for="@kabanItem.PatientName" class="text-danger"></span>
+                    <label>Patient Name</label>
+                    <select name="selectPatient" class="ui dropdown" id="patientName">
+                        
+                        <option value="Onotseike">Paula Aliu</option>
+                    </select>
+                  @*  <span asp-validation-for="@kabanItem.PatientName" class="text-danger"></span>*@
                 </div>
 
                 <div class="disabled field">
-                    <label asp-for="@kabanItem.CreatedItemTimeStamp"></label>
-                    <input asp-for="@kabanItem.CreatedItemTimeStamp" class="form-control"  id="createdTS"/>
-                    <span asp-validation-for="@kabanItem.CreatedItemTimeStamp" class="text-danger"></span>
+                    <label>Created Item Time Stamp</label>
+                    <input id="createdTimeStamp" class="form-control"/>
+                    @*<span asp-validation-for="@kabanItem.CreatedItemTimeStamp" class="text-danger"></span>*@
                 </div>
                 
                 <div class="disabled field">
-                    <label asp-for="@kabanItem.CareGiverName"></label>
-                    <input asp-for="@kabanItem.CareGiverName" class="form-control" />
-                    <span asp-validation-for="@kabanItem.CareGiverName" class="text-danger"></span>
+                    <label>Care Giver Name</label>
+                    <input id="careGiver" class="form-control"/>
+                    @*<span asp-validation-for="@kabanItem.CareGiverName" class="text-danger"></span>*@
                 </div>
 
             </form>
@@ -159,13 +170,40 @@ else
 
                 var ts = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@DateTime.Now.ToString("g")))";
                    
-                $('#createdTS').val(ts);
+                $('#createdTimeStamp').val(ts);
+                var cg = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@user.FirstName + " "+ @user.LastName))";
+                   
+
+                $('#careGiver').val(cg);
 
             });
 
-            $('#addTodo').click(function () {
-               
+            $('div#addTodo').click(function () {
+                var itemName = $('input#itemName').val();
+                var itemType = $('select#itemType').val();
+                var itemDescription = $('input#itemDescription').val();
+                var patientName = $('select#patientName').val();
+                var createdTimeStamp = $('input#createdTimeStamp').val();
+                var careGiver = $('input#careGiver').val();
 
+
+                $.ajax(
+                    {
+                        url: '/Home/AddPatientTodoItem',
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            itemName: itemName,
+                            itemType: itemType,
+                            kabanItemDescription: itemDescription,
+                            createdItemTimeStamp: createdTimeStamp,
+                            patientName: patientName,
+                            careGiverName: careGiver
+                        },
+                        success: function () {
+                            console.log("Todo Item Added!!!");
+                        }
+                    });
             });
         });
     </script>

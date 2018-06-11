@@ -28,8 +28,19 @@ namespace ShevaHomeCare.Models
         }
 
 
+        public IEnumerable<ApplicationUser> GetPatientUsers()
+        {
+            try
+            {
 
-
+                return _userManager.GetUsersInRoleAsync("Patient").Result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Could not get All Patient Users from database", ex);
+                return null;
+            }
+        }
 
         public void AddKabanItem(KabanItem kabanItem)
         {

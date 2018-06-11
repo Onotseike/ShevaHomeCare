@@ -52,7 +52,42 @@ namespace ShevaHomeCare.Controllers
 
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+        }
+
+        [HttpPost]
+        [Route("/Home/AddPatientTodoItem")]
+        public IActionResult AddPatientTodoItem(string itemName, string itemType, string kabanItemDescription,
+            string createdItemTimeStamp, string patientName, string careGiverName)
+        {
+            var itemTypee = KabanItemType.Drug;
+            if (itemType == KabanItemType.Exercise.ToString())
+            {
+                itemTypee = KabanItemType.Exercise;
+            }
+            else if (itemType == KabanItemType.Meal.ToString())
+            {
+                itemTypee = KabanItemType.Meal;
+            }
+            else if (itemType == KabanItemType.Miscellenous.ToString())
+            {
+                itemTypee = KabanItemType.Miscellenous;
+            }
+            var kabanItem = new KabanItem
+            {
+
+                ItemType = itemTypee,
+                ItemName = itemName,
+                KabanitemDescription = kabanItemDescription,
+                CreatedItemTimeStamp = createdItemTimeStamp,
+                DoneItemTimeStamp = null,
+                PatientName = patientName,
+                CareGiverName = careGiverName
+            };
+
+            _shevaHcRepo.AddKabanItem(kabanItem);
+            _shevaHcRepo.SaveDataBaseChanges();
+            return Json("Kaban Data Item Added");
         }
     }
 }

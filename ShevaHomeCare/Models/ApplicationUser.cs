@@ -9,6 +9,6 @@ namespace ShevaHomeCare.Models
         public string LastName { get; set; }
         public string OtherName { get; set; }
         public string Hint { get; set; }
-        public string Email { get; set; }
+        //public string Email { get; set; }
     }
 }

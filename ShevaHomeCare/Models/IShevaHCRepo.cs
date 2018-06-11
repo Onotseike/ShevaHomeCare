@@ -10,6 +10,8 @@ namespace ShevaHomeCare.Models
         string GetUserRole(ApplicationUser user);
         ApplicationUser GetUser(ClaimsPrincipal userPrincipal);
 
+        IEnumerable<ApplicationUser> GetPatientUsers();
+
         void AddKabanItem(KabanItem kabanItem);
         IEnumerable<KabanItem> GetAllKabanItems();
 
