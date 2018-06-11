@@ -1,5 +1,6 @@
 ﻿@*@model*@
 
+@using System.Web
 @using Microsoft.AspNetCore.Identity
 @using ShevaHomeCare.Models
 
@@ -16,6 +17,7 @@
     var user = ShevaHcRepo.GetUser(User);
     var userRole = ShevaHcRepo.GetUserRole(user);
     var kabanData = ShevaHcRepo.GetAllKabanItems();
+    var kabanItem = new KabanItem();
 }
 
 <div class="ui violet piled segment container">
@@ -74,9 +76,9 @@ else
                                 <img src="~/images/elliot.jpg" class="hidden content">
                             </div>
 
-                            <div class="ui bottom attached button">
+                            <div class="ui bottom attached button" id="addPatient">
                                 <i class="add icon"></i>
-                                Add New Patient
+                                Add New Patient Todo Item
                             </div>
                         </div>
                     </div>
@@ -85,7 +87,86 @@ else
         </div>
     </div>
 
+
+    <div class="ui modal">
+        <div class="header">
+            Add a New To-do Item for a Patient
+        </div>
+        
+        <div class="content">
+            <form class="ui form">
+                <div asp-validation-summary="All" class="ui error message"></div>
+
+                <div class="field error">
+                    <label asp-for="@kabanItem.ItemName"></label>
+                    <input asp-for="@kabanItem.ItemName" class="form-control" />
+                    <span asp-validation-for="@kabanItem.ItemName" class="text-danger"></span>
+                </div>
+
+                <div class="field error">
+                    <label asp-for="@kabanItem.ItemType"></label>
+                    <input asp-for="@kabanItem.ItemType" class="form-control" />
+                    <span asp-validation-for="@kabanItem.ItemType" class="text-danger"></span>
+                </div>
+
+                <div class="field error">
+                    <label asp-for="@kabanItem.KabanitemDescription"></label>
+                    <input asp-for="@kabanItem.KabanitemDescription" class="form-control" />
+                    <span asp-validation-for="@kabanItem.KabanitemDescription" class="text-danger"></span>
+                </div>
+
+                <div class="field error">
+                    <label asp-for="@kabanItem.PatientName"></label>
+                    <input asp-for="@kabanItem.PatientName" class="form-control" />
+                    <span asp-validation-for="@kabanItem.PatientName" class="text-danger"></span>
+                </div>
+
+                <div class="disabled field">
+                    <label asp-for="@kabanItem.CreatedItemTimeStamp"></label>
+                    <input asp-for="@kabanItem.CreatedItemTimeStamp" class="form-control"  id="createdTS"/>
+                    <span asp-validation-for="@kabanItem.CreatedItemTimeStamp" class="text-danger"></span>
+                </div>
+                
+                <div class="disabled field">
+                    <label asp-for="@kabanItem.CareGiverName"></label>
+                    <input asp-for="@kabanItem.CareGiverName" class="form-control" />
+                    <span asp-validation-for="@kabanItem.CareGiverName" class="text-danger"></span>
+                </div>
+
+            </form>
+        </div>
+        
+        <div class="actions">
+            <div class="ui red deny button">
+                Cancel
+            </div>
+            <div class="ui positive right labeled icon button" id="addTodo">
+                Add To-do Item
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
 }
 
 
 
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+            $('#addPatient').click(function () {
+                $('.ui.modal').modal('show');
+
+                var ts = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@DateTime.Now.ToString("g")))";
+                   
+                $('#createdTS').val(ts);
+
+            });
+
+            $('#addTodo').click(function () {
+               
+
+            });
+        });
+    </script>
+}
