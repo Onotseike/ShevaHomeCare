@@ -210,6 +210,8 @@ namespace ShevaHomeCare.Data.Migrations
 
                     b.Property<string>("PatientName");
 
+                    b.Property<string>("Status");
+
                     b.HasKey("KabanItemID");
 
                     b.ToTable("KabanItemsData");

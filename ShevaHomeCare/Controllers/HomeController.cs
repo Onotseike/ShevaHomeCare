@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ShevaHomeCare.Data;
 using ShevaHomeCare.Models;
 
 namespace ShevaHomeCare.Controllers
@@ -17,17 +18,19 @@ namespace ShevaHomeCare.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationUserRoles> _roleManager;
         private readonly ILogger _logger;
+        private readonly ApplicationDbContext _context;
 
         public HomeController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationUserRoles> roleManager,
-            IShevaHCRepo shevaHcRepo, ILoggerFactory loggerFactory)
+            IShevaHCRepo shevaHcRepo, ILoggerFactory loggerFactory, ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger<AccountController>();
             _shevaHcRepo = shevaHcRepo;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -82,12 +85,95 @@ namespace ShevaHomeCare.Controllers
                 CreatedItemTimeStamp = createdItemTimeStamp,
                 DoneItemTimeStamp = null,
                 PatientName = patientName,
-                CareGiverName = careGiverName
+                CareGiverName = careGiverName,
+                Status = "Open"
             };
 
             _shevaHcRepo.AddKabanItem(kabanItem);
             _shevaHcRepo.SaveDataBaseChanges();
             return Json("Kaban Data Item Added");
+        }
+
+        [HttpPost]
+        [Route("/Home/ModifyKabanItem")]
+        public IActionResult ModifyKabanItem([FromBody] KabanCrudParams param)
+        {
+            var value = param.Value;
+
+            if (param.Action == "insert" || (param.Action == "batch" && (param.Added.Count > 0)))
+            {
+                if (param.Added != null && param.Added.Count > 0)
+                {
+                    foreach (var kabanItem in param.Added)
+                    {
+                        _shevaHcRepo.AddKabanItem(kabanItem);
+                    }
+                }
+
+                _shevaHcRepo.SaveDataBaseChanges();
+                return Json("Kaban Data Item Added");
+            }
+
+            if ((param.Action == "remove") || (param.Action == "batch" && (param.Deleted.Count > 0)))
+            {
+                foreach (var kabanItem in param.Deleted)
+                {
+                    var oldKabanItem = _shevaHcRepo
+                        .GetAllKabanItems().SingleOrDefault(oKi => oKi.KabanItemID == kabanItem.KabanItemID);
+                    if (oldKabanItem != null)
+                    {
+                        _context.KabanItemsData.Remove(oldKabanItem);
+
+                    }
+                }
+
+                _shevaHcRepo.SaveDataBaseChanges();
+            }
+
+            if (param.Changed != null && param.Changed.Count > 0)
+            {
+                foreach (var kabanItem in param.Changed)
+                {
+                    var oldKItem = _shevaHcRepo
+                        .GetAllKabanItems().SingleOrDefault(oKItem => oKItem.KabanItemID == kabanItem.KabanItemID);
+
+                    if (oldKItem != null)
+                    {
+                        KabanItem updateKabanItem = _context.KabanItemsData.Single(k => k.KabanItemID == kabanItem.KabanItemID);
+
+                        updateKabanItem.Status = kabanItem.Status;
+                        if (kabanItem.Status == "Done")
+                        {
+                            updateKabanItem.DoneItemTimeStamp = DateTime.Now.ToString("g");
+
+                        }
+                    }
+                }
+            }
+
+            _shevaHcRepo.SaveDataBaseChanges();
+            return Json("Modification Succeeded");
+
+        }
+
+        [HttpPost]
+        [Route("/Home/OnDropKabanItem")]
+        public IActionResult OnDropKabanItem(string status, int id)
+        {
+            var oldKItem = _shevaHcRepo.GetAllKabanItems().SingleOrDefault(oKItem => oKItem.KabanItemID == id);
+            if (oldKItem != null)
+            {
+                oldKItem.Status = status;
+                if (status == "Close")
+                {
+                    oldKItem.DoneItemTimeStamp = DateTime.Now.ToString("g");
+                    
+                }
+                _shevaHcRepo.SaveDataBaseChanges();
+            }
+
+
+            return Json("Modification Succeeded");
         }
     }
 }

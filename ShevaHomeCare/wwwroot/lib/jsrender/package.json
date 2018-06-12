@@ -1,0 +1,99 @@
+{
+  "_args": [
+    [
+      "jsrender@^0.9.75",
+      "D:\\onots\\source\\repos\\MSc Project\\ShevaHomeCare\\ShevaHomeCare"
+    ]
+  ],
+  "_from": "jsrender@>=0.9.75-0 <0.10.0-0",
+  "_id": "jsrender@0.9.90",
+  "_inCache": true,
+  "_location": "/jsrender",
+  "_nodeVersion": "6.11.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/jsrender-0.9.90.tgz_1511979703629_0.1524045194964856"
+  },
+  "_npmUser": {
+    "email": "borismoore@gmail.com",
+    "name": "borismoore"
+  },
+  "_npmVersion": "4.6.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "jsrender",
+    "raw": "jsrender@^0.9.75",
+    "rawSpec": "^0.9.75",
+    "scope": null,
+    "spec": ">=0.9.75-0 <0.10.0-0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "/syncfusion-javascript"
+  ],
+  "_resolved": "https://registry.npmjs.org/jsrender/-/jsrender-0.9.90.tgz",
+  "_shasum": "be17d6bfb031c5541a604fd2bda88b4271b53ef5",
+  "_shrinkwrap": null,
+  "_spec": "jsrender@^0.9.75",
+  "_where": "D:\\onots\\source\\repos\\MSc Project\\ShevaHomeCare\\ShevaHomeCare",
+  "author": {
+    "name": "Boris Moore",
+    "url": "https://github.com/borismoore"
+  },
+  "browser": "./jsrender.js",
+  "bugs": {
+    "url": "https://github.com/borismoore/jsrender/issues"
+  },
+  "dependencies": {
+    "through2": "^2.0.0"
+  },
+  "description": "Best-of-breed templating in browser or on Node.js (with Express 4, Hapi and Browserify integration)",
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "glob-stream": "^5.0.0",
+    "gulp": "^3.9.0",
+    "jquery": "^2.1.4",
+    "qunit": "^0.7.6"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "be17d6bfb031c5541a604fd2bda88b4271b53ef5",
+    "tarball": "https://registry.npmjs.org/jsrender/-/jsrender-0.9.90.tgz"
+  },
+  "homepage": "http://www.jsviews.com/#jsrender",
+  "installable": true,
+  "keywords": [
+    "browserify",
+    "ecosystem:jquery",
+    "express",
+    "hapi",
+    "jquery-plugin",
+    "jsrender",
+    "node",
+    "template",
+    "templates"
+  ],
+  "license": "MIT",
+  "main": "./jsrender-node.js",
+  "maintainers": [
+    {
+      "name": "defunctzombie",
+      "email": "shtylman@gmail.com"
+    },
+    {
+      "name": "borismoore",
+      "email": "borismoore@gmail.com"
+    }
+  ],
+  "name": "jsrender",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/borismoore/jsrender.git"
+  },
+  "scripts": {
+    "test": "node ./test/unit-tests-node-runner.js"
+  },
+  "version": "0.9.90"
+}

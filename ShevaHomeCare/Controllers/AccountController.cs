@@ -252,6 +252,7 @@ namespace ShevaHomeCare.Controllers
                                 return View(model);
                             }
                         }
+                        await _userManager.AddToRoleAsync(user, "Patient");
                     }
                     else if(userType == ShevaUserType.CareGiver)
                     {
@@ -269,6 +270,7 @@ namespace ShevaHomeCare.Controllers
                                 return View(model);
                             }
                         }
+                        await _userManager.AddToRoleAsync(user, "CareGiver");
                     }
 
                     _logger.LogInformation("User created a new account with password.");

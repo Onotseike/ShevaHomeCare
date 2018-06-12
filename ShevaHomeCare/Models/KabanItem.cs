@@ -17,7 +17,7 @@ namespace ShevaHomeCare.Models
         public string ItemName { get; set; }
 
         public KabanItemType ItemType { get; set; }
-
+       
         public string KabanitemDescription { get; set; }
 
         public string CreatedItemTimeStamp { get; set; }
@@ -27,5 +27,7 @@ namespace ShevaHomeCare.Models
         public string PatientName { get; set; }
 
         public string CareGiverName { get; set; }
+
+        public string Status { get; set; }
     }
 }

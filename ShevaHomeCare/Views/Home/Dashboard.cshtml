@@ -15,16 +15,17 @@
 @{
     ViewData["Title"] = "Main DashBoard";
     var user = ShevaHcRepo.GetUser(User);
-    var userRole = ShevaHcRepo.GetUserRole(user);
+    var userRole = UserManager.GetRolesAsync(user).Result.SingleOrDefault();  //ShevaHcRepo.GetUserRole(user);
     var kabanData = ShevaHcRepo.GetAllKabanItems();
-   // var kabanItem = new KabanItem();
+    // var kabanItem = new KabanItem();
     var patientList = UserManager.GetUsersInRoleAsync("Patient").Result; //ShevaHcRepo.GetPatientUsers();
-    
+
 }
 
 <div class="ui violet piled segment container">
     <h2>@ViewData["Title"]</h2>
     <h3>@ViewData["Message"]</h3>
+    <h2>@userRole</h2>
 </div>
 
 
@@ -33,14 +34,27 @@
     <div class="ui internally celled grid inverted menu">
         <div class="item row">
             <div class="twelve wide column">
-                <ej-kanban id="KanbanBoard" dataSource="ViewBag.datasource">
+                <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource" key-field="Status" allow-title="true" enable-total-count="true" allow-selection="true" is-responsive="true" allow-keyboard-navigation="true" allow-printing="true" class="e-kanbancontent" card-drop="cardDropped">
+                    
+                    @*<e-datamanager crud-url="Home/ModifyKabanItem">
+
+                    </e-datamanager>*@
+
                     <e-kanbancolumns>
-                        <e-kanbancolumn header-text="Backlog" key=@(new List<string>(){"Open"})>
+                        <e-kanbancolumn header-text="Backlog" key=@(new List<string>() {"Open"})>
                         </e-kanbancolumn>
                         <e-kanbancolumn header-text="In Progress" key=@(new List<string>() {"InProgress"})></e-kanbancolumn>
                         <e-kanbancolumn header-text="Done" key=@(new List<string>() {"Close"})></e-kanbancolumn>
                     </e-kanbancolumns>
+
+                    <e-kanbanfield content="KabanitemDescription" primary-key="KabanItemID" swimlane-key="CareGiverName" title="ItemName" tag="CreatedItemTimeStamp">
+                    </e-kanbanfield>
+
+                    <e-kanbanscroll-settings width=@("70%") height=@("70%") allow-editing="true">
+
+                    </e-kanbanscroll-settings>
                 </ej-kanban>
+
             </div>
             <div class="four wide column">
                 <div class="row">
@@ -56,16 +70,32 @@
 }
 else
 {
+    
     <div class="ui internally celled grid inverted menu">
         <div class="item row">
             <div class="twelve wide column">
-                <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource">
+                <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource" key-field="Status" allow-title="true" enable-total-count="true" allow-selection="true" is-responsive="true" allow-keyboard-navigation="true" allow-printing="true" class="e-kanbancontent" allow-drag-and-drop="false">
+                    
+                    @*<e-datamanager crud-url="Home/ModifyKabanItem">
+
+                    </e-datamanager>*@
+
                     <e-kanbancolumns>
-                        <e-kanbancolumn header-text="Back Log"></e-kanbancolumn>
-                        <e-kanbancolumn header-text="In Progress"></e-kanbancolumn>
-                        <e-kanbancolumn header-text="Done"></e-kanbancolumn>
+                        <e-kanbancolumn header-text="Backlog" key=@(new List<string>() {"Open"})>
+                        </e-kanbancolumn>
+                        <e-kanbancolumn header-text="In Progress" key=@(new List<string>() {"InProgress"})></e-kanbancolumn>
+                        <e-kanbancolumn header-text="Done" key=@(new List<string>() {"Close"})></e-kanbancolumn>
                     </e-kanbancolumns>
+
+                    <e-kanbanfield content="KabanitemDescription" primary-key="KabanItemID" swimlane-key="PatientName" title="ItemName" tag="CreatedItemTimeStamp">
+                    </e-kanbanfield>
+
+                    <e-kanbanscroll-settings width=@("70%") height=@("70%") allow-editing="true">
+
+                    </e-kanbanscroll-settings>
                 </ej-kanban>
+                
+               
             </div>
             <div class="four wide column">
                 <div class="row">
@@ -165,7 +195,8 @@ else
 @section Scripts
 {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+            
             $('#addPatient').click(function () {
                 $('.ui.modal').modal('show');
 
@@ -207,5 +238,29 @@ else
                     });
             });
         });
+    </script>
+    
+    <script>
+        function cardDropped(args) {
+            //console.log(args.data[0]["Status"]);
+            //console.log(typeof(args.data[0]) );
+           
+            var status = args.data[0]["Status"];
+            var id = args.data[0]["KabanItemID"];
+
+            $.ajax(
+                {
+                    url: '/Home/OnDropKabanItem',
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id: id,
+                        status: status
+                    },
+                    success: function () {
+                        console.log("Todo Item Updated!!!");
+                    }
+                });
+        }
     </script>
 }
