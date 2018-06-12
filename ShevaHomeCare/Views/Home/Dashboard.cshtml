@@ -33,11 +33,12 @@
     <div class="ui internally celled grid inverted menu">
         <div class="item row">
             <div class="twelve wide column">
-                <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource">
+                <ej-kanban id="KanbanBoard" dataSource="ViewBag.datasource">
                     <e-kanbancolumns>
-                        <e-kanbancolumn header-text="Back Log"></e-kanbancolumn>
-                        <e-kanbancolumn header-text="In Progress"></e-kanbancolumn>
-                        <e-kanbancolumn header-text="Done"></e-kanbancolumn>
+                        <e-kanbancolumn header-text="Backlog" key=@(new List<string>(){"Open"})>
+                        </e-kanbancolumn>
+                        <e-kanbancolumn header-text="In Progress" key=@(new List<string>() {"InProgress"})></e-kanbancolumn>
+                        <e-kanbancolumn header-text="Done" key=@(new List<string>() {"Close"})></e-kanbancolumn>
                     </e-kanbancolumns>
                 </ej-kanban>
             </div>
