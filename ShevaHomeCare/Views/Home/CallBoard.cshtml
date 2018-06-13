@@ -1,17 +1,43 @@
 ﻿@{
-    ViewData["Title"] = "Contact";
+    ViewData["Title"] = "Call Dashboard";
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
 
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div class="ui violet piled segment container">
+    <h2>@ViewData["Title"]</h2>
+    <h3>@ViewData["Message"]</h3>
+</div>
+
+<hr/>
+<div class="ui violet segments container">
+    <div class="ui raised segment container">
+        <video id="incomingVideo" autoplay class="embed-responsive-16by9"></video>
+        <audio id="incomingAudio" autoplay></audio>
+    </div>
+    
+    <div class="ui raised center aligned segment container">
+        <div class="massive ui inverted green buttons">
+            <button class="ui button" id="videoCallBtn">Video Call</button>
+            <div class="or"></div>
+            <button class="ui positive button" id="voiceCallBtn">Voice Call</button>
+        </div>
+    </div>
+
+    <div class="ui raised center aligned segment container">
+        <button class="massive ui inverted red button" id="endCallBtn">End Call</button>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+           
+            
+
+           
+        });
+   
+    </script>
+}

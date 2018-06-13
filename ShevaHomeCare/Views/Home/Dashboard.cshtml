@@ -26,16 +26,27 @@
 <div class="ui violet piled segment container">
     <h2>@ViewData["Title"]</h2>
     <h3>@ViewData["Message"]</h3>
-    <h2>@userRole</h2>
+    <h4 id="usernameSinch">@user.UserName</h4>
 </div>
 
 
 @if (userRole == "Patient")
 {
-    <div class="ui internally celled grid inverted menu">
+    <div class="ui right aligned internally celled grid inverted menu">
+        <div class="centered row">
+            <div class="right floated left aligned ten wide column">
+               
+            </div>
+            <div class="right floated left aligned four wide column">
+                <button class="massive ui inverted black labeled icon button" id="callCareGiver">
+                    <i class="tty icon"></i>
+                    Call Care Giver
+                </button>
+            </div>
+        </div>
         <div class="item row">
             <div class="twelve wide column">
-                <div class ="ui purple segment">
+                <div class="ui purple segment">
                     <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource" key-field="Status" allow-title="true" enable-total-count="true" allow-selection="true" is-responsive="true" allow-keyboard-navigation="true" allow-printing="true" class="e-kanbancontent" card-drop="cardDropped">
 
                         @*<e-datamanager crud-url="Home/ModifyKabanItem">
@@ -61,7 +72,7 @@
             <div class="four wide centered column">
                 <div class="row">
                     <div>
-                        <h3 class="center align">Mentally Stimulating Games</h3>
+                        @*<h3 class="center align">Mentally Stimulating Games</h3>*@
                         <br />
                         <div class="ui raised cards">
                             <div class="purple card">
@@ -89,10 +100,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="ui inverted divider"></div>
+                <br />
+                <hr />
+                @*<div class="ui inverted divider"></div>*@
                 <div class="row">
                     <div>
-                        <h3 class="center aligned">Simple NHS Physical Exercises</h3>
+                        @*<h3 >Simple NHS Physical Exercises</h3>*@
                         <br />
                         <div class="ui raised cards">
                             <div class="purple card">
@@ -103,7 +116,7 @@
                                 <div class="ui extra content">
                                     <div class="ui bottom attached button" id="nhsExercise">
                                         <i class="heartbeat icon"></i>
-                                       NHS Simple Exercises
+                                        NHS Simple Exercises
                                     </div>
                                 </div>
 
@@ -119,11 +132,12 @@
 else
 {
     
-    <div class="ui internally celled grid inverted menu">
+    <div class="ui right aligned internally celled grid inverted menu">
+
         <div class="item row">
             <div class="twelve wide column">
                 <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource" key-field="Status" allow-title="true" enable-total-count="true" allow-selection="true" is-responsive="true" allow-keyboard-navigation="true" allow-printing="true" class="e-kanbancontent" allow-drag-and-drop="false">
-                    
+
                     @*<e-datamanager crud-url="Home/ModifyKabanItem">
 
                     </e-datamanager>*@
@@ -142,8 +156,8 @@ else
 
                     </e-kanbanscroll-settings>
                 </ej-kanban>
-                
-               
+
+
             </div>
             <div class="four wide column">
                 <div class="row">
@@ -238,6 +252,49 @@ else
     </div>
 }
 
+<div class="ui fullscreen modal" id="callModal">
+    <div class="header">
+        <h2>Call Board</h2>
+    </div>
+    
+    <div class="content">
+        <div class="ui violet segments container">
+            <div class="ui raised segment container">
+                <div class="ui horizontal segments">
+                    <div class="ui green segment">
+                         <video id="incomingVideo" autoplay class="embed-responsive-16by9"></video>
+                    </div>
+                    <div class="ui blue segment">
+                        <video id="outgoingVideo" autoplay class="embed-responsive-4by3"></video>
+                    </div>
+                </div>
+
+                <audio id="incomingAudio" autoplay></audio>
+                
+                <audio id="ringback" src='~/images/ringback.wav' loop></audio>
+                <audio id="ringtone" src='~/images/phone_ring.wav' loop></audio>
+            </div>
+    
+            <div class="ui raised center aligned segment container">
+                <div class="massive ui inverted green buttons">
+                    <button class="ui button" id="videoCallBtn">Video Call</button>
+                    <div class="or"></div>
+                    <button class="ui positive button" id="voiceCallBtn">Voice Call</button>
+                </div>
+            </div>
+
+            <div class="ui raised center aligned segment container">
+                <div class="massive ui inverted buttons">
+                    <button class="ui negative button" id="endCallBtn">End Call</button>
+                    <div class="or"></div>
+                    <button class="ui positive button" id="answerCallBtn">Answer Call</button>
+                </div>
+               @* <button class="massive ui inverted red button" id="endCallBtn">End Call</button>*@
+            </div>
+        </div>
+    </div>
+
+</div>
 
 
 @section Scripts
@@ -293,7 +350,11 @@ else
 
             $('#nhsExercise').click(function() {
                 window.open("https://www.nhs.uk/Tools/Documents/NHS_ExercisesForOlderPeople.pdf");
-            })
+            });
+
+            $('#callCareGiver').click(function() {
+                $('#callModal').modal('setting', 'closable', false).modal('show');
+            });
         });
     </script>
     
@@ -320,4 +381,7 @@ else
                 });
         }
     </script>
+    
+    
+    <script src="~/Calling.js"></script>
 }

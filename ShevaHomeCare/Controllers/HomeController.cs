@@ -48,7 +48,7 @@ namespace ShevaHomeCare.Controllers
 
         public IActionResult CallBoard()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "You can make Video or Voice Calls contact page.";
 
             return View();
         }

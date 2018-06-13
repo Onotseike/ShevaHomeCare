@@ -13,18 +13,31 @@
         @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />*@
         <link href="~/lib/syncfusion-javascript/Content/ej/web/default-theme/ej.web.all.min.css" rel="stylesheet" />
         <link href="~/lib/syncfusion-javascript/Content/ej/web/responsive-css/ej.responsive.css" rel="stylesheet" />
-        
+
+
+        <script src="//cdn.sinch.com/latest/sinch.min.js" asp-fallback-src="~/js/sinch.min.js"></script>
+
         @*<script src="~/lib/jquery/dist/jquery.js"></script>
 
         <script src="~/lib/jsrender/jsrender.min.js"></script>
 
         <script src="~/lib/syncfusion-javascript/Scripts/ej/web/ej.web.all.min.js"></script>*@
+
+
+
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css"
               asp-fallback-href="~/lib/semantic/dist/semantic.min.css"
               asp-fallback-test-class="transition" asp-fallback-test-property="animation-iteration-count" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+
+
+        <link href="~/lib/syncfusion-javascript/Content/ej/web/default-theme/ej.web.all.min.css" rel="stylesheet" />
+        <link href="~/lib/syncfusion-javascript/Content/ej/web/responsive-css/ej.responsive.css" rel="stylesheet" />
+
+
+        <script src="//cdn.sinch.com/latest/sinch.min.js" asp-fallback-src="~/js/sinch.min.js"></script>
     </environment>
 </head>
 <body class="ui inverted body">
@@ -75,6 +88,9 @@
         </script>
         <script src="https://cdn.syncfusion.com/js/assets/external/jsrender.min.js"  asp-fallback-src="~/lib/syncfusion-javascript/Scripts/jsrender.min.js" ></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
+        
+        <script src="~/lib/jsrender/jsrender.min.js"></script>
+        <script src="~/lib/syncfusion-javascript/Scripts/ej/web/ej.web.all.min.js"></script>
     </environment>
     @RenderSection("Scripts", required: false)
 </body>
