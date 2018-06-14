@@ -163,7 +163,7 @@ userCallClient.addEventListener({
 
 $('button#videoCallBtn').click(function(event) {
     event.preventDefault();
-    if (userToCall != '') {
+    if (userToCall !== '') {
         $(this).prop("disabled", true);
         $('button#voiceCallBtn').prop("disabled", true);
 
@@ -179,7 +179,7 @@ $('button#videoCallBtn').click(function(event) {
 
 $('button#voiceCallBtn').click(function (event) {
     event.preventDefault();
-    if (userToCall != '') {
+    if (userToCall !== '') {
         $(this).prop("disabled", true);
         $('button#videoCallBtn').prop("disabled", true);
 
