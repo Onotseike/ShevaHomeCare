@@ -71,7 +71,7 @@ voiceCallListener = {
         $('audio#ringtone').trigger("pause");
 
         var phone = document.getElementById("shakeAnim");
-        phone.style.display = 'none';
+        //phone.style.display = 'none';
 
         
         if (callType === 'Voice')
@@ -114,6 +114,7 @@ voiceCallListener = {
         $('button#voiceCallBtn').prop("disabled", false);
 
         console.log("CALL ENDED!");
+        $('div#callModal').modal('setting', 'closable', false).modal('ended');
         //Report call stats
         var callDetails = call.getDetails();
 
