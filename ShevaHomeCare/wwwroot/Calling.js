@@ -70,7 +70,7 @@ voiceCallListener = {
         $('audio#ringback').trigger("pause");
         $('audio#ringtone').trigger("pause");
 
-        var phone = document.getElementById("shakeAnim");
+        //var phone = document.getElementById("shakeAnim");
         //phone.style.display = 'none';
 
         
@@ -96,8 +96,8 @@ voiceCallListener = {
         $('audio#ringtone').trigger("pause");
         $('audio#incomingVoice').attr('src', '');
 
-        var phone = document.getElementById("shakeAnim");
-        phone.style.display = 'none';
+        //var phone = document.getElementById("shakeAnim");
+        //phone.style.display = 'none';
 
         $('video#outgoingVideo').attr('src', '');
         $('video#incomingVideo').attr('src', '');
@@ -114,7 +114,7 @@ voiceCallListener = {
         $('button#voiceCallBtn').prop("disabled", false);
 
         console.log("CALL ENDED!");
-        $('div#callModal').modal('setting', 'closable', false).modal('ended');
+        $('div#callModal').modal('hide');
         //Report call stats
         var callDetails = call.getDetails();
 
@@ -126,7 +126,7 @@ voiceCallListener = {
         //$('input#sessionTherapistId').val(therapistUsername);
         // $('input#clientId').val(call.fromId);
         //  $('input#subType').val(clientSubcription);
-        $('div#myModal').modal('show');
+        //$('div#myModal').modal('show');
         if (call.error) {
             console.log('Failure message: ' + call.error.message);
         }
