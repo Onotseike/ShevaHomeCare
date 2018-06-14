@@ -1,5 +1,5 @@
 ﻿//Constants
-var demoAPIKey = 'f2bfffdd-9937-433c-8cdf-c62195d69944';
+var demoAPIKey = 'a78e3020-0882-423b-8a2e-d429455316e2';
 var prodAPIKey = '3216b5dd-c8b3-45c4-b7f3-e0912913d78d';
 
 
