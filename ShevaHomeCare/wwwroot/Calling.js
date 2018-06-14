@@ -102,13 +102,9 @@ voiceCallListener = {
         $('video#outgoingVideo').attr('src', '');
         $('video#incomingVideo').attr('src', '');
 
-        $("button#voiceCallBtn").prop("disabled", false);
-        $("button#videoCallBtn").prop("disabled", false);
+       
 
-        $("button#answer").prop("disabled", false);
-        $("button#hangup").prop("disabled", false);
-
-        $(this).prop("disabled", false);
+        $('button#endCallBtn').prop("disabled", false);
         $('button#answerCallBtn').prop("disabled", false);
         $('button#videoCallBtn').prop("disabled", false);
         $('button#voiceCallBtn').prop("disabled", false);
@@ -118,11 +114,7 @@ voiceCallListener = {
         //Report call stats
         var callDetails = call.getDetails();
 
-        $('input#startTime').val(callDetails.startedTime);
-        $('input#stopTime').val(callDetails.endedTime);
-        $('input#duration').val(callDetails.duration);
-        $('input#endCause').val(call.getEndCause());
-
+        console.log(callDetails);
         //$('input#sessionTherapistId').val(therapistUsername);
         // $('input#clientId').val(call.fromId);
         //  $('input#subType').val(clientSubcription);
