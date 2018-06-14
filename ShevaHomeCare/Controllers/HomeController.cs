@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,8 @@ using ShevaHomeCare.Models;
 
 namespace ShevaHomeCare.Controllers
 {
+    [Authorize]
+    [RequireHttps]
     public class HomeController : Controller
     {
         private readonly IShevaHCRepo _shevaHcRepo;
@@ -38,11 +41,30 @@ namespace ShevaHomeCare.Controllers
             return View();
         }
 
-        public IActionResult DashBoard()
+        public async Task<IActionResult> DashBoard()
         {
             ViewData["Message"] = "Your Application's Main DashBoard page.";
             var kabanData = _shevaHcRepo.GetAllKabanItems();
-            ViewBag.datasource = kabanData;
+            var user = await GetCurrentUserAsync();
+            if (_shevaHcRepo.GetUserRole(user) == "Patient")
+            {
+               // Debug.WriteLine("Fucking hell");
+                var userKabanData = kabanData.Where(kData => kData.PatientName == user.FirstName + " " + user.LastName).Select(kData =>kData);
+                var kabanItems = userKabanData.ToList();
+               
+                ViewBag.datasource = kabanItems;
+            }
+            else if (_shevaHcRepo.GetUserRole(user) == "CareGiver")
+            {
+                var userKabanData = kabanData.Where(kData => kData.CareGiverName == user.FirstName + " " + user.LastName).Select(kData => kData);
+                ViewBag.datasource = userKabanData.ToList();
+            }
+            else
+            {
+                ViewBag.datasource = kabanData;
+            }
+
+            
             return View();
         }
 
@@ -175,5 +197,12 @@ namespace ShevaHomeCare.Controllers
 
             return Json("Modification Succeeded");
         }
+
+
+        private Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            return _userManager.GetUserAsync(HttpContext.User);
+        }
+
     }
 }

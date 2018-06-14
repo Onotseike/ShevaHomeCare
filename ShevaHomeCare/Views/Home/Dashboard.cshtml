@@ -173,7 +173,7 @@ else
 
                             <div class="ui bottom attached button" id="addPatient">
                                 <i class="add icon"></i>
-                                Add New Patient Todo Item
+                                Add New Patient To-Do Item
                             </div>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ else
     </div>
 
 
-    <div class="ui modal">
+    <div class="ui modal" id="addPatientModal">
         <div class="header">
             Add a New To-do Item for a Patient
         </div>
@@ -219,8 +219,12 @@ else
                 <div class="field error">
                     <label>Patient Name</label>
                     <select name="selectPatient" class="ui dropdown" id="patientName">
-                        
-                        <option value="Onotseike">Paula Aliu</option>
+                        @foreach (var patient in patientList)
+                        {
+                            var patientName = patient.FirstName + " " + patient.LastName;
+                            <option value="@patientName">@patientName</option>
+                        }
+                        @*<option value="Onotseike">Paula Aliu</option>*@
                     </select>
                   @*  <span asp-validation-for="@kabanItem.PatientName" class="text-danger"></span>*@
                 </div>
@@ -305,7 +309,7 @@ else
         $(document).ready(function () {
            
             $('#addPatient').click(function () {
-                $('.ui.modal').modal('show');
+                $('.ui.modal#addPatientModal').modal('show');
 
                 var ts = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@DateTime.Now.ToString("g")))";
                    
