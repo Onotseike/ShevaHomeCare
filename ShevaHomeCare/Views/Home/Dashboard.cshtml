@@ -35,7 +35,7 @@
     <div class="ui right aligned internally celled grid inverted menu">
         <div class="centered row">
             <div class="right floated left aligned ten wide column">
-               
+
             </div>
             <div class="right floated left aligned four wide column">
                 <button class="massive ui inverted black labeled icon button" id="callCareGiver">
@@ -51,7 +51,7 @@
 
                         @*<e-datamanager crud-url="Home/ModifyKabanItem">
 
-            </e-datamanager>*@
+                            </e-datamanager>*@
 
                         <e-kanbancolumns>
                             <e-kanbancolumn header-text="Backlog" key=@(new List<string>() {"Open"})>
@@ -131,7 +131,7 @@
 }
 else
 {
-    
+
     <div class="ui right aligned internally celled grid inverted menu">
 
         <div class="item row">
@@ -140,7 +140,7 @@ else
 
                     @*<e-datamanager crud-url="Home/ModifyKabanItem">
 
-                    </e-datamanager>*@
+                        </e-datamanager>*@
 
                     <e-kanbancolumns>
                         <e-kanbancolumn header-text="Backlog" key=@(new List<string>() {"Open"})>
@@ -187,7 +187,7 @@ else
         <div class="header">
             Add a New To-do Item for a Patient
         </div>
-        
+
         <div class="content">
             <form class="ui form">
                 @*<div asp-validation-summary="All" class="ui error message"></div>*@
@@ -195,7 +195,7 @@ else
                 <div class="field error">
                     <label>Item Name</label>
                     <input id="itemName" class="form-control" />
-                    
+
                 </div>
 
                 <div class="field error">
@@ -226,24 +226,24 @@ else
                         }
                         @*<option value="Onotseike">Paula Aliu</option>*@
                     </select>
-                  @*  <span asp-validation-for="@kabanItem.PatientName" class="text-danger"></span>*@
+                    @*  <span asp-validation-for="@kabanItem.PatientName" class="text-danger"></span>*@
                 </div>
 
                 <div class="disabled field">
                     <label>Created Item Time Stamp</label>
-                    <input id="createdTimeStamp" class="form-control"/>
+                    <input id="createdTimeStamp" class="form-control" />
                     @*<span asp-validation-for="@kabanItem.CreatedItemTimeStamp" class="text-danger"></span>*@
                 </div>
-                
+
                 <div class="disabled field">
                     <label>Care Giver Name</label>
-                    <input id="careGiver" class="form-control"/>
+                    <input id="careGiver" class="form-control" />
                     @*<span asp-validation-for="@kabanItem.CareGiverName" class="text-danger"></span>*@
                 </div>
 
             </form>
         </div>
-        
+
         <div class="actions">
             <div class="ui red deny button">
                 Cancel
@@ -260,7 +260,7 @@ else
     <div class="header">
         <h2>Call Board</h2>
     </div>
-    
+
     <div class="content">
         <div class="ui violet segments container">
             <div class="ui raised segment container">
@@ -276,11 +276,11 @@ else
                 </div>
 
                 <audio id="incomingAudio" autoplay></audio>
-                
+
                 <audio id="ringback" src='~/images/ringback.wav' loop></audio>
                 <audio id="ringtone" src='~/images/phone_ring.wav' loop></audio>
             </div>
-    
+
             <div class="ui raised center aligned segment container">
                 <div class="massive ui inverted green buttons">
                     <button class="ui button" id="videoCallBtn">Video Call</button>
@@ -295,7 +295,7 @@ else
                     <div class="or"></div>
                     <button class="ui positive button" id="answerCallBtn">Answer Call</button>
                 </div>
-               @* <button class="massive ui inverted red button" id="endCallBtn">End Call</button>*@
+                @* <button class="massive ui inverted red button" id="endCallBtn">End Call</button>*@
             </div>
         </div>
     </div>
@@ -304,18 +304,18 @@ else
 
 
 @section Scripts
-{
+    {
     <script>
         $(document).ready(function () {
-           
+
             $('#addPatient').click(function () {
                 $('.ui.modal#addPatientModal').modal('show');
 
                 var ts = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@DateTime.Now.ToString("g")))";
-                   
+
                 $('#createdTimeStamp').val(ts);
                 var cg = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@user.FirstName + " "+ @user.LastName))";
-                   
+
 
                 $('#careGiver').val(cg);
 
@@ -363,12 +363,12 @@ else
             });
         });
     </script>
-    
+
     <script>
         function cardDropped(args) {
             //console.log(args.data[0]["Status"]);
             //console.log(typeof(args.data[0]) );
-           
+
             var status = args.data[0]["Status"];
             var id = args.data[0]["KabanItemID"];
 
@@ -387,7 +387,8 @@ else
                 });
         }
     </script>
-    
-    
+
+
     <script src="~/Calling.js"></script>
+    <script src="~/ROSWeb.js"></script>
 }
