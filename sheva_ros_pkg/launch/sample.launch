@@ -1,0 +1,3 @@
+<launch>
+        <node name="sheva_node_handle" pkg="sheva_ros_pkg" type="sheva_node_handle" output="screen">
+</launch>
