@@ -1,5 +1,6 @@
 ﻿@*@model*@
 
+@using System.Data
 @using System.Web
 @using Microsoft.AspNetCore.Identity
 @using Newtonsoft.Json
@@ -17,7 +18,7 @@
     ViewData["Title"] = "Main DashBoard";
     var user = ShevaHcRepo.GetUser(User);
     var userRole = UserManager.GetRolesAsync(user).Result.SingleOrDefault();  //ShevaHcRepo.GetUserRole(user);
-    var kabanData = ShevaHcRepo.GetAllKabanItems();
+   // var kabanData = ViewData["NotDone"];
     // var kabanItem = new KabanItem();
     var patientList = UserManager.GetUsersInRoleAsync("Patient").Result; //ShevaHcRepo.GetPatientUsers();
 
@@ -32,101 +33,118 @@
 
 @if (userRole == "Patient")
 {
-    <div class="ui right aligned internally celled grid inverted menu">
-        <div class="centered row">
-            <div class="right floated left aligned ten wide column">
+<div class="ui right aligned internally celled grid inverted menu">
+    <div class="centered row">
+        <div class="right floated left aligned ten wide column">
 
-            </div>
-            <div class="right floated left aligned four wide column">
-                <button class="massive ui inverted black labeled icon button" id="callCareGiver">
-                    <i class="tty icon"></i>
-                    Call Care Giver
-                </button>
+        </div>
+        <div class="right floated left aligned four wide column">
+            <button class="massive ui inverted black labeled icon button" id="callCareGiver">
+                <i class="tty icon"></i>
+                Call Care Giver
+            </button>
+        </div>
+    </div>
+    <div class="item row">
+        <div class="twelve wide column">
+            <div class="ui purple segment">
+                <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource" key-field="Status" allow-title="true" enable-total-count="true" allow-selection="true" is-responsive="true" allow-keyboard-navigation="true" allow-printing="true" class="e-kanbancontent" card-drop="cardDropped">
+
+                    @*<e-datamanager crud-url="Home/ModifyKabanItem">
+
+                        </e-datamanager>*@
+
+                    <e-kanbancolumns>
+                        <e-kanbancolumn header-text="Backlog" key=@(new List<string>() {"Open"})>
+                        </e-kanbancolumn>
+                        <e-kanbancolumn header-text="In Progress" key=@(new List<string>() {"InProgress"})></e-kanbancolumn>
+                        <e-kanbancolumn header-text="Done" key=@(new List<string>() {"Close"})></e-kanbancolumn>
+                    </e-kanbancolumns>
+
+                    <e-kanbanfield content="KabanitemDescription" primary-key="KabanItemID" swimlane-key="CareGiverName" title="ItemName" tag="CreatedItemTimeStamp">
+                    </e-kanbanfield>
+
+                    <e-kanbanscroll-settings width=@("70%") height=@("70%") allow-editing="true">
+
+                    </e-kanbanscroll-settings>
+                </ej-kanban>
             </div>
         </div>
-        <div class="item row">
-            <div class="twelve wide column">
-                <div class="ui purple segment">
-                    <ej-kanban id="KabanBoard" dataSource="ViewBag.datasource" key-field="Status" allow-title="true" enable-total-count="true" allow-selection="true" is-responsive="true" allow-keyboard-navigation="true" allow-printing="true" class="e-kanbancontent" card-drop="cardDropped">
-
-                        @*<e-datamanager crud-url="Home/ModifyKabanItem">
-
-                            </e-datamanager>*@
-
-                        <e-kanbancolumns>
-                            <e-kanbancolumn header-text="Backlog" key=@(new List<string>() {"Open"})>
-                            </e-kanbancolumn>
-                            <e-kanbancolumn header-text="In Progress" key=@(new List<string>() {"InProgress"})></e-kanbancolumn>
-                            <e-kanbancolumn header-text="Done" key=@(new List<string>() {"Close"})></e-kanbancolumn>
-                        </e-kanbancolumns>
-
-                        <e-kanbanfield content="KabanitemDescription" primary-key="KabanItemID" swimlane-key="CareGiverName" title="ItemName" tag="CreatedItemTimeStamp">
-                        </e-kanbanfield>
-
-                        <e-kanbanscroll-settings width=@("70%") height=@("70%") allow-editing="true">
-
-                        </e-kanbanscroll-settings>
-                    </ej-kanban>
-                </div>
-            </div>
-            <div class="four wide centered column">
-                <div class="row">
-                    <div>
-                        @*<h3 class="center align">Mentally Stimulating Games</h3>*@
-                        <br />
-                        <div class="ui raised cards">
-                            <div class="purple card">
-                                <div class="ui centered image content">
-                                    <img src="~/images/brain.jpg">
-                                </div>
-
-                                <div class="ui extra content">
-                                    <select class="ui floating dropdown labeled icon button centered" id="brainGames">
-                                        <i class="angle double down icon"></i>
-                                        Brain Games
-                                        <option class="item"> Select a Game</option>
-                                        <option class="item" value="http://freebrainagegames.com/recall.html">
-                                            Free Brain Age Games
-                                        </option>
-                                        <option class="item" value="https://www.brain-games.co.uk/game/Brain+Trainer">
-                                            Free Brain Games UK
-                                        </option>
-
-
-                                    </select>
-                                </div>
-
+        <div class="four wide centered column">
+            <div class="row">
+                <div>
+                    @*<h3 class="center align">Mentally Stimulating Games</h3>*@
+                    <br />
+                    <div class="ui raised cards">
+                        <div class="purple card">
+                            <div class="ui centered image content">
+                                <img src="~/images/brain.jpg">
                             </div>
+
+                            <div class="ui extra content">
+                                <select class="ui floating dropdown labeled icon button centered" id="brainGames">
+                                    <i class="angle double down icon"></i>
+                                    Brain Games
+                                    <option class="item"> Select a Game</option>
+                                    <option class="item" value="http://freebrainagegames.com/recall.html">
+                                        Free Brain Age Games
+                                    </option>
+                                    <option class="item" value="https://www.brain-games.co.uk/game/Brain+Trainer">
+                                        Free Brain Games UK
+                                    </option>
+
+
+                                </select>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <br />
-                <hr />
-                @*<div class="ui inverted divider"></div>*@
-                <div class="row">
-                    <div>
-                        @*<h3 >Simple NHS Physical Exercises</h3>*@
-                        <br />
-                        <div class="ui raised cards">
-                            <div class="purple card">
-                                <div class="ui centered image content">
-                                    <img src="~/images/exercise.jpg">
-                                </div>
-
-                                <div class="ui extra content">
-                                    <div class="ui bottom attached button" id="nhsExercise">
-                                        <i class="heartbeat icon"></i>
-                                        NHS Simple Exercises
-                                    </div>
-                                </div>
-
+            </div>
+            <br />
+            <hr />
+            @*<div class="ui inverted divider"></div>*@
+            <div class="row">
+                <div>
+                    @*<h3 >Simple NHS Physical Exercises</h3>*@
+                    <br />
+                    <div class="ui raised cards">
+                        <div class="purple card">
+                            <div class="ui centered image content">
+                                <img src="~/images/exercise.jpg">
                             </div>
+
+                            <div class="ui extra content">
+                                <div class="ui bottom attached button" id="nhsExercise">
+                                    <i class="heartbeat icon"></i>
+                                    NHS Simple Exercises
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <h5 id="itemsNum" hidden>@ViewBag.datasource.Count</h5>
+    <h5 id="notItemsNum" hidden>@ViewData["NotDone"]</h5>
+
+    <h5 id="mealName" hidden>@ViewData["MealName"]</h5>
+    <h5 id="mealDes">@ViewData["MealDes"]</h5>
+
+    <h5 id="drugName" hidden>@ViewData["DrugName"]</h5>
+    <h5 id="drugDes">@ViewData["DrugDes"]</h5>
+
+    <h5 id="exerName" hidden>@ViewData["ExerciseName"]</h5>
+    <h5 id="exerDes">@ViewData["ExerciseDes"]</h5>
+
+    <h5 id="miscName" hidden>@ViewData["MiscName"]</h5>
+    <h5 id="miscDes" hidden>@ViewData["MiscDes"]</h5>
+
+
+</div>
 
 }
 else
@@ -306,6 +324,7 @@ else
 @section Scripts
     {
     <script>
+        var counterItems;
         $(document).ready(function () {
 
             $('#addPatient').click(function () {
@@ -361,6 +380,11 @@ else
             $('#callCareGiver').click(function() {
                 $('#callModal').modal('setting', 'closable', false).modal('show');
             });
+
+            counterItems = @ViewBag.datasource.Count;
+            console.log(counterItems);
+            console.log(typeof (counterItems));
+
         });
     </script>
 
@@ -390,5 +414,5 @@ else
 
 
     <script src="~/Calling.js"></script>
-    <script src="~/ROSWeb.js"></script>
+    <script src="~/js/ROSWeb.js"></script>
 }

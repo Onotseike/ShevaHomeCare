@@ -51,7 +51,32 @@ namespace ShevaHomeCare.Controllers
                // Debug.WriteLine("Fucking hell");
                 var userKabanData = kabanData.Where(kData => kData.PatientName == user.FirstName + " " + user.LastName).Select(kData =>kData);
                 var kabanItems = userKabanData.ToList();
-               
+                var notDone = kabanItems.Where(kd => kd.Status != "Close").Select(kd => kd).Count();
+                ViewData["NotDone"] = notDone;
+
+                ViewData["MealName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Meal)
+                    .Select(kd => kd.ItemName).FirstOrDefault();
+                ViewData["MealDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Meal)
+                    .Select(kd => kd.KabanitemDescription).FirstOrDefault();
+
+                ViewData["DrugName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Drug)
+                    .Select(kd => kd.ItemName).FirstOrDefault();
+                ViewData["DrugDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Drug)
+                    .Select(kd => kd.KabanitemDescription).FirstOrDefault();
+
+                ViewData["ExerciseName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Exercise)
+                    .Select(kd => kd.ItemName).FirstOrDefault();
+                ViewData["ExerciseDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Exercise)
+                    .Select(kd => kd.KabanitemDescription).FirstOrDefault();
+
+                ViewData["MiscName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Miscellenous)
+                    .Select(kd => kd.ItemName).FirstOrDefault();
+                ViewData["MiscDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Miscellenous)
+                    .Select(kd => kd.KabanitemDescription).FirstOrDefault();
+
+
+
+
                 ViewBag.datasource = kabanItems;
             }
             else if (_shevaHcRepo.GetUserRole(user) == "CareGiver")
