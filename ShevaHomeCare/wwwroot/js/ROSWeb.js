@@ -103,3 +103,14 @@ miscListener = new ROSLIB.Topic({
 });
 miscListener.publish(miscData);
 
+langListener = new ROSLIB.Topic({
+    ros: ros,
+    name: '/LangPublisher',
+    messageType: 'std_msgs/String'
+});
+langdata = ""
+function langPublish() {
+    console.log("Writing Language DATA");
+    console.log(langdata);
+    langListener.publish(langdata);
+}

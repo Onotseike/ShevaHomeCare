@@ -36,6 +36,22 @@
     <div class="ui right aligned internally celled grid inverted menu">
         <div class="centered row">
             <div class="right floated left aligned ten wide column">
+                <div class="ui violet segment">
+                    <div>Select Your Language of Choice</div>
+
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="lang" value="en-US">
+                        <label> English </label>
+                    </div>
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="lang" value="es-ES">
+                        <label> Spanish </label>
+                    </div>
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="lang" value="it-IT">
+                        <label> Italian </label>
+                    </div>
+                </div>
 
             </div>
             <div class="right floated left aligned four wide column">
@@ -322,25 +338,25 @@ else
 
 
 @section Scripts
-    {
+{
     <script>
         var counterItems;
-        $(document).ready(function () {
+        $(document).ready(function() {
 
-            $('#addPatient').click(function () {
+            $('#addPatient').click(function() {
                 $('.ui.modal#addPatientModal').modal('show');
 
                 var ts = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@DateTime.Now.ToString("g")))";
 
                 $('#createdTimeStamp').val(ts);
-                var cg = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@user.FirstName + " "+ @user.LastName))";
+                var cg = "@Html.Raw(HttpUtility.JavaScriptStringEncode(@user.FirstName + " " + @user.LastName))";
 
 
                 $('#careGiver').val(cg);
 
             });
 
-            $('div#addTodo').click(function () {
+            $('div#addTodo').click(function() {
                 var itemName = $('input#itemName').val();
                 var itemType = $('select#itemType').val();
                 var itemDescription = $('input#itemDescription').val();
@@ -362,7 +378,7 @@ else
                             patientName: patientName,
                             careGiverName: careGiver
                         },
-                        success: function () {
+                        success: function() {
                             console.log("Todo Item Added!!!");
                         }
                     });
@@ -405,7 +421,7 @@ else
                         id: id,
                         status: status
                     },
-                    success: function () {
+                    success: function() {
                         console.log("Todo Item Updated!!!");
                     }
                 });
@@ -417,6 +433,17 @@ else
     @if (userRole == "Patient")
     {
         <script src="~/js/ROSWeb.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                $('input[name=lang').click(function() {
+                    window.langdata = $('input[name=lang]:checked').val();
+                    langPublish();
+                });
+
+
+            });
+        </script>
     }
 
 }
