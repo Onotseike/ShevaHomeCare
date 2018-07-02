@@ -26,6 +26,24 @@ var sinchClient = new SinchClient({
 });
 
 sinchClient.startActiveConnection();
+try {
+    sinchClient.newUser(sinchLoginObject, function (ticket) {
+
+        sinchClient.start(ticket, function () {
+
+            console.log("Created New user");
+            console.log("Logged in as A New User!");
+            //offline.style.display = 'none';
+            //online.style.display = 'block';
+            console.log(sinchLoginObject.username);
+
+        }).fail(handleError);
+    });
+
+} catch (e) {
+    console.log("User Exists");
+
+} 
 
 
 sinchClient.start(sinchLoginObject,
@@ -40,17 +58,6 @@ sinchClient.start(sinchLoginObject,
     });
 
 
-sinchClient.newUser(sinchLoginObject, function (ticket) {
-    sinchClient.start(ticket, function () {
-        
-        console.log("Created New user");
-        console.log("Logged in as A New User!");
-        //offline.style.display = 'none';
-        //online.style.display = 'block';
-        console.log(sinchLoginObject.username);
-        
-    }).fail(handleError);
-});
 
 var userCallClient = sinchClient.getCallClient();
 

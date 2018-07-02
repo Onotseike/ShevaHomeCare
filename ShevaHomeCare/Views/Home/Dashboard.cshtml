@@ -462,7 +462,7 @@ else
                                 //var recordedAudio = $('audio#recordedAudio').sr
                                 recordedAudio.src = URL.createObjectURL(blob);
                                 //recordedAudio.controls = true;
-                                //recordedAudio.autoplay = true;
+                                recordedAudio.autoplay = true;
                                 const url = URL.createObjectURL(blob);
                                 console.log(url);
                                 audioDownload.href = recordedAudio.src;

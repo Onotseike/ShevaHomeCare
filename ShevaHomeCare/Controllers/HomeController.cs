@@ -248,7 +248,7 @@ namespace ShevaHomeCare.Controllers
             //Console.WriteLine("GGGG");
             //Console.WriteLine(files.Count);
             string fName = "";
-            if (files.Count - 1 != 0)
+            if (files.Count - 1 != 0 && files.Count > 0)
             {
                 fName = String.Concat("audio (", files.Count - 1, ").wav");
             }
@@ -266,8 +266,8 @@ namespace ShevaHomeCare.Controllers
             STTModel sttModel = new STTModel();
             string host = @"speech.platform.bing.com";
             string contentType = @"audio/wav; codec=""audio/pcm""; samplerate=16000";
-            string requestUri = "https://westus.api.cognitive.microsoft.com/sts/v1.0";// args[0];
-
+            string requestUri = "https://speech.platform.bing.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed";// args[0];
+           // string requestUri = "https://westus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed";
             ///*
             // * Input your own audio file or use read from a microphone stream directly.
             // */
@@ -286,24 +286,24 @@ namespace ShevaHomeCare.Controllers
                 Console.WriteLine("Request Uri: " + requestUri + Environment.NewLine);
 
 
-
-                HttpWebRequest request = null;
-
-                request = (HttpWebRequest)HttpWebRequest.Create(requestUri);
+                var request = (HttpWebRequest)WebRequest.Create(requestUri);
 
                 request.SendChunked = true;
 
                 request.Accept = @"application/json;text/xml";
 
-                request.Method = "POST";
+                request.Method = @"POST";
 
                 request.ProtocolVersion = HttpVersion.Version11;
 
-                request.Host = host;
+                request.Host = @"speech.platform.bing.com";
 
-                request.ContentType = contentType;
+                request.ContentType = @"audio/wav; codec=audio/pcm; samplerate=16000";
 
-                request.Headers["Authorization"] = "Bearer " + token;
+                //request.Headers["Authorization"] = "Bearer " + token;
+                //request.Expect=
+                request.Headers[@"Ocp-Apim-Subscription-Key"] = @"09ae100b29fe4defb6fe7f0519040889";
+
 
 
 
@@ -358,16 +358,18 @@ namespace ShevaHomeCare.Controllers
                      * Get the response from the service.
 
                      */
-
+                    //ServicePointManager
+                    //        .ServerCertificateValidationCallback +=
+                    //    (sender, cert, chain, sslPolicyErrors) => true;
                     Console.WriteLine("Response:");
 
                     using (WebResponse response = request.GetResponse())
 
                     {
-
+                        Console.WriteLine("Responnse:");
                         Console.WriteLine(((HttpWebResponse)response).StatusCode);
 
-
+                        Console.WriteLine("Responnnnse:");
 
                         using (StreamReader sr = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException()))
 

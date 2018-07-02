@@ -10,7 +10,7 @@ namespace ShevaHomeCare.Models
     {
         public static readonly string FetchTokenUri = "https://westus.api.cognitive.microsoft.com/sts/v1.0";
         // ReSharper disable once InconsistentNaming
-        private static readonly string subscriptionKey = "63b92128fd524b8698f94544e83b334c";
+        private static readonly string subscriptionKey = "09ae100b29fe4defb6fe7f0519040889";
         private string _token;
         private Timer _accessTokenRenewer;
 
@@ -70,6 +70,7 @@ namespace ShevaHomeCare.Models
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+                Console.WriteLine(fetchUri);
                 UriBuilder uriBuilder = new UriBuilder(fetchUri);
                 uriBuilder.Path += "/issueToken";
 

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="0.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" PrivateAssets="All" />
     <PackageReference Include="Syncfusion.EJ.AspNet.Core" Version="16.1600.0.32" />
@@ -147,6 +148,12 @@
     <None Include="wwwroot\lib\semantic\dist\node_modules\jquery\src\var\support.js" />
     <None Include="wwwroot\lib\semantic\dist\node_modules\jquery\src\var\toString.js" />
     <None Include="wwwroot\lib\semantic\dist\node_modules\jquery\src\wrap.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CognitiveServices.Speech.csharp">
+      <HintPath>C:\Users\onots\.nuget\packages\microsoft.cognitiveservices.speech\0.4.0\lib\net45\Microsoft.CognitiveServices.Speech.csharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
