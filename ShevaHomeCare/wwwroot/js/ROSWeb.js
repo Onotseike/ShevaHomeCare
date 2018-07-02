@@ -1,6 +1,6 @@
-﻿//JavaScript file for interfacing with the Robot
-
-
+﻿////JavaScript file for interfacing with the Robot
+//SDK = require
+//SDK = require(['~/lib/microsoft-speech-browser-sdk/distrib/Speech.Browser.Sdk.js']);
 var robotURL = 'ws://localhost:9090';
 
 var numOfTodoItems = parseInt($('h5#itemsNum').text());
@@ -113,4 +113,5 @@ function langPublish() {
     console.log("Writing Language DATA");
     console.log(langdata);
     langListener.publish(langdata);
-}
+};
+

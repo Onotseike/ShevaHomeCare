@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>aspnet-ShevaHomeCare-4FD9676D-1CBA-43A1-B646-E7B5D2A031DD</UserSecretsId>
+    <TypeScriptToolsVersion>2.8</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,10 +1,12 @@
 {
   "devDependencies": {
     "bootstrap": "^3.3.7",
+    "gulp": "^3.9.1",
     "jquery": "^3.3.1",
     "jsrender": "^0.9.90",
-    "gulp": "^3.9.1",
-    "syncfusion-javascript": "^16.1.37"
+    "microsoft-speech-browser-sdk": "0.0.12",
+    "syncfusion-javascript": "^16.1.37",
+    "webpack": "4.14.0"
   },
   "name": "asp.net",
   "private": true,
