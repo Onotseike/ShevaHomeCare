@@ -108,10 +108,23 @@ langListener = new ROSLIB.Topic({
     name: '/LangPublisher',
     messageType: 'std_msgs/String'
 });
-langdata = ""
+langdata = "";
 function langPublish() {
     console.log("Writing Language DATA");
     console.log(langdata);
     langListener.publish(langdata);
 };
 
+langListener = new ROSLIB.Topic({
+    ros: ros,
+    name: '/StartSTTPublisher',
+    messageType: 'std_msgs/Bool'
+});
+
+startSTTData = false;
+
+function startSTTPublish() {
+    console.log("Sending Start STT DATA");
+    console.log(startSTTData);
+    langListener.publish(startSTTData);
+};

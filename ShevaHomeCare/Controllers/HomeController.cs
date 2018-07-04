@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -17,7 +19,7 @@ using ShevaHomeCare.Models;
 namespace ShevaHomeCare.Controllers
 {
     [Authorize]
-    [RequireHttps]
+   // [RequireHttps]
     public class HomeController : Controller
     {
         private readonly IShevaHCRepo _shevaHcRepo;
@@ -233,185 +235,7 @@ namespace ShevaHomeCare.Controllers
 
 
 
-        [HttpPost]
-        [Route("/Home/STTAudio")]
-        public IActionResult SttAudio()
-        {
-            var webroot = _env.WebRootPath;
-            var extList = new string[] { ".wav" };
-           
-            string downloadFolder = @"D:\onots\Downloads";
-
-            var files = Directory.GetFiles(downloadFolder , "*.*")
-                .Where(n => extList.Contains(System.IO.Path.GetExtension(n), StringComparer.OrdinalIgnoreCase))
-                .ToList();
-            //Console.WriteLine("GGGG");
-            //Console.WriteLine(files.Count);
-            string fName = "";
-            if (files.Count - 1 != 0 && files.Count > 0)
-            {
-                fName = String.Concat("audio (", files.Count - 1, ").wav");
-            }
-            else
-            {
-                fName = "audio.wav";
-            }
-               
-            //Console.WriteLine(fName);
-            string srcFile = Path.Combine(downloadFolder, fName);
-            string destFile = Path.Combine(webroot, "audio.wav");
-            System.IO.File.Copy(srcFile, destFile, true);
-
-
-            STTModel sttModel = new STTModel();
-            string host = @"speech.platform.bing.com";
-            string contentType = @"audio/wav; codec=""audio/pcm""; samplerate=16000";
-            string requestUri = "https://speech.platform.bing.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed";// args[0];
-           // string requestUri = "https://westus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed";
-            ///*
-            // * Input your own audio file or use read from a microphone stream directly.
-            // */
-            string audioFile = destFile; //args[1];
-            string responseString;
-            FileStream fs = null;
-
-            try
-
-            {
-
-                var token = sttModel.GetAccessToken();
-
-                Console.WriteLine("Token: {0}\n", token);
-
-                Console.WriteLine("Request Uri: " + requestUri + Environment.NewLine);
-
-
-                var request = (HttpWebRequest)WebRequest.Create(requestUri);
-
-                request.SendChunked = true;
-
-                request.Accept = @"application/json;text/xml";
-
-                request.Method = @"POST";
-
-                request.ProtocolVersion = HttpVersion.Version11;
-
-                request.Host = @"speech.platform.bing.com";
-
-                request.ContentType = @"audio/wav; codec=audio/pcm; samplerate=16000";
-
-                //request.Headers["Authorization"] = "Bearer " + token;
-                //request.Expect=
-                request.Headers[@"Ocp-Apim-Subscription-Key"] = @"09ae100b29fe4defb6fe7f0519040889";
-
-
-
-
-                using (fs = new FileStream(audioFile, FileMode.Open, FileAccess.Read))
-
-                {
-
-
-
-                    /*
-
-                     * Open a request stream and write 1024 byte chunks in the stream one at a time.
-
-                     */
-
-                    byte[] buffer = null;
-
-                    int bytesRead = 0;
-
-                    using (Stream requestStream = request.GetRequestStream())
-
-                    {
-
-                        /*
-
-                         * Read 1024 raw bytes from the input audio file.
-
-                         */
-
-                        buffer = new Byte[checked((uint)Math.Min(1024, (int)fs.Length))];
-
-                        while ((bytesRead = fs.Read(buffer, 0, buffer.Length)) != 0)
-
-                        {
-
-                            requestStream.Write(buffer, 0, bytesRead);
-
-                        }
-
-
-
-                        // Flush
-
-                        requestStream.Flush();
-
-                    }
-
-
-
-                    /*
-
-                     * Get the response from the service.
-
-                     */
-                    //ServicePointManager
-                    //        .ServerCertificateValidationCallback +=
-                    //    (sender, cert, chain, sslPolicyErrors) => true;
-                    Console.WriteLine("Response:");
-
-                    using (WebResponse response = request.GetResponse())
-
-                    {
-                        Console.WriteLine("Responnse:");
-                        Console.WriteLine(((HttpWebResponse)response).StatusCode);
-
-                        Console.WriteLine("Responnnnse:");
-
-                        using (StreamReader sr = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException()))
-
-                        {
-
-                            responseString = sr.ReadToEnd();
-
-                        }
-
-
-
-                        Console.WriteLine(responseString);
-
-                        Console.ReadLine();
-
-                    }
-
-                }
-
-            }
-
-            catch (Exception ex)
-
-            {
-
-                Console.WriteLine(ex.ToString());
-
-                Console.WriteLine(ex.Message);
-
-                Console.ReadLine();
-
-            }
-
         
-
-
-
-
-            return Json("Done Succeeded");
-        }
-
-
         private Task<ApplicationUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);

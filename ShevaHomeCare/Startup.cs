@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShevaHomeCare.Data;
@@ -38,6 +39,11 @@ namespace ShevaHomeCare
             services.AddTransient<IShevaHCRepo, ShevaHCRepo>();
             services.AddTransient<ShevaHCRepo>();
             services.AddMvc();
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;//.
+                options.HttpsPort = 5001;//
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +59,7 @@ namespace ShevaHomeCare
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            app.UseHttpsRedirection();//
 
             app.UseStaticFiles();
 

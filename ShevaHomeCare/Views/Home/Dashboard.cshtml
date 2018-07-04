@@ -47,7 +47,7 @@
                     </div>
                     <div class="ui radio checkbox">
                         <input type="radio" name="lang" value="es-ES">
-                        <label> Spanish </label>
+                        <label class="ui huge"> Spanish </label>
                     </div>
                     <div class="ui radio checkbox">
                         <input type="radio" name="lang" value="it-IT">
@@ -62,10 +62,7 @@
                         <input type="checkbox" name="public">
                         <label>Start Speech</label>
                     </div>
-                    <a class="ui segment" id=audioDownload></a>
                 </div>
-                <audio id=recordedAudio></audio>
-                @*<a class="ui segment" id=audioDownload></a>*@
             </div>
             <div class="right floated left aligned four wide column">
                 <button class="massive ui inverted black labeled icon button" id="callCareGiver">
@@ -451,47 +448,16 @@ else
             //Call Setup()
             $(document).ready(function () {
                 
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                    .then(stream => {
-                        rec = new MediaRecorder(stream);
-                        rec.ondataavailable = e => {
-                            window.audioChunks.push(e.data);
-                            if (rec.state == "inactive") {
-                                // Use blob to create a new Object URL and playback/download
-                                let blob = new Blob(window.audioChunks, { type: 'audio/wav' });
-                                //var recordedAudio = $('audio#recordedAudio').sr
-                                recordedAudio.src = URL.createObjectURL(blob);
-                                //recordedAudio.controls = true;
-                                recordedAudio.autoplay = true;
-                                const url = URL.createObjectURL(blob);
-                                console.log(url);
-                                audioDownload.href = recordedAudio.src;
-                                audioDownload.download = 'audio.wav';
-                                audioDownload.innerHTML = '';
-
-                                //console.log("hhqqqqhhh");
-                            }
-                        }
-                    })
-                    .catch(e => console.log(e));
                 $('#startSpeech').checkbox({
                     onChecked: function () {
-                        audioChunks = [];
-                        rec.start();
+                        window.startSTTData = true;
+                        startSTTPublish();
+
                     },
                     onUnchecked: function() {
-                        rec.stop();
-                        audioDownload.click();
-                        $.ajax({
-                            url: '/Home/STTAudio',
-                            type: "POST",
-                            
-                            
-                            success: function() {
-                                console.log("STT Item Updated!!!");
-                            }
-                        });
-                        //console.log("hdddddhhhh");
+                        
+                        window.startSTTData = false;
+                        startSTTPublish();
                     }
                 
 
@@ -500,7 +466,6 @@ else
 
             $('input[name=lang').click(function() {
                 window.langdata = $('input[name=lang]:checked').val();
-                languageOptions = $('input[name=lang]:checked').val();
                 langPublish();
                 
             });
@@ -509,16 +474,7 @@ else
 
         </script>
 
-        <script>
-            var languageOptions, startBtn;
-            //requi
-
-            $(document).ready(function() {
-
-
-            });
-        </script>
-
+        
 
 
 
