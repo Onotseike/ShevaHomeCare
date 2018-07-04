@@ -98,9 +98,9 @@ def ROSSetup():
 
     miscSubscriber = rospy.Subscriber("/MiscPublisher",String,MiscDataCallBack)    
 
-    langSubscriber = rospy.Subscriber("/LangPublisher",String,MiscDataCallBack)    
+    langSubscriber = rospy.Subscriber("/LangPublisher",String,LangDataCallBack)    
 
-    sttSubscriber = rospy.Subscriber("/StartSTTPublisher",String,MiscDataCallBack)  
+    sttSubscriber = rospy.Subscriber("/StartSTTPublisher",Bool,StartSTTDataCallback)  
 
      
 

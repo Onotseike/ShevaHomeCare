@@ -112,7 +112,10 @@ langdata = "";
 function langPublish() {
     console.log("Writing Language DATA");
     console.log(langdata);
-    langListener.publish(langdata);
+    var langData = new ROSLIB.Message({
+        data: langdata
+    });
+    langListener.publish(langData);
 };
 
 sttListener = new ROSLIB.Topic({
@@ -126,5 +129,8 @@ startSTTData = false;
 function startSTTPublish() {
     console.log("Sending Start STT DATA");
     console.log(startSTTData);
-    sttListener.publish(startSTTData);
+    var sttData = new ROSLIB.Message({
+        data: startSTTData
+    });
+    sttListener.publish(sttData);
 };

@@ -1,3 +1,4 @@
 <launch>
         <node name="sample" pkg="sheva_ros_pkg" type="sample.py" output="screen">
+        </node>
 </launch>
