@@ -59,27 +59,28 @@ namespace ShevaHomeCare.Controllers
                // Debug.WriteLine("Fucking hell");
                 var userKabanData = kabanData.Where(kData => kData.PatientName == user.FirstName + " " + user.LastName).Select(kData =>kData);
                 var kabanItems = userKabanData.ToList();
+                var notDoneKabanItems = kabanItems.Where(kd => kd.Status != "Close").Select(kd => kd).ToList();
                 var notDone = kabanItems.Where(kd => kd.Status != "Close").Select(kd => kd).Count();
                 ViewData["NotDone"] = notDone;
 
-                ViewData["MealName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Meal)
+                ViewData["MealName"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Meal)
                     .Select(kd => kd.ItemName).FirstOrDefault();
-                ViewData["MealDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Meal)
+                ViewData["MealDes"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Meal)
                     .Select(kd => kd.KabanitemDescription).FirstOrDefault();
 
-                ViewData["DrugName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Drug)
+                ViewData["DrugName"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Drug)
                     .Select(kd => kd.ItemName).FirstOrDefault();
-                ViewData["DrugDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Drug)
+                ViewData["DrugDes"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Drug)
                     .Select(kd => kd.KabanitemDescription).FirstOrDefault();
 
-                ViewData["ExerciseName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Exercise)
+                ViewData["ExerciseName"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Exercise)
                     .Select(kd => kd.ItemName).FirstOrDefault();
-                ViewData["ExerciseDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Exercise)
+                ViewData["ExerciseDes"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Exercise)
                     .Select(kd => kd.KabanitemDescription).FirstOrDefault();
 
-                ViewData["MiscName"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Miscellenous)
+                ViewData["MiscName"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Miscellenous)
                     .Select(kd => kd.ItemName).FirstOrDefault();
-                ViewData["MiscDes"] = kabanItems.Where(kd => kd.ItemType == KabanItemType.Miscellenous)
+                ViewData["MiscDes"] = notDoneKabanItems.Where(kd => kd.ItemType == KabanItemType.Miscellenous)
                     .Select(kd => kd.KabanitemDescription).FirstOrDefault();
 
 

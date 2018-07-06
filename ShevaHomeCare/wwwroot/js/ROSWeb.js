@@ -1,7 +1,8 @@
 ﻿////JavaScript file for interfacing with the Robot
 //SDK = require
 //SDK = require(['~/lib/microsoft-speech-browser-sdk/distrib/Speech.Browser.Sdk.js']);
-var robotURL = 'ws://localhost:9090';
+//var robotURL = 'ws://localhost:9090';
+var robotURL = 'ws://192.168.0.108:9090';
 
 var numOfTodoItems = parseInt($('h5#itemsNum').text());
 var numOfNotDoneItems = parseInt($('h5#notItemsNum').text());
@@ -21,7 +22,10 @@ var miscTypeDescription = $('h5#miscDes').text();//'Do not forget to video call 
 
 //ROS Publisher Variables
 var todoListener;
-
+var meal = mealTypeName + " with a description of: " + mealTypeDescription + ". ";
+var drug = drugTypeName + " with a description of: " + drugTypeDescription + ". ";
+var exercise = exerciseTypeName + " with a description of: " + exerciseTypeDescription + ". ";
+var misc = miscTypeName + " with a description of: " + miscTypeDescription + ". ";
 
 //Initialization of ROS Instance and Connection
 
@@ -48,19 +52,41 @@ numItems = new ROSLIB.Message({
 });
 
 mealData = new ROSLIB.Message({
-    data: mealTypeName + " with a description of: " + mealTypeDescription
+    data: meal
 });
 
 drugData = new ROSLIB.Message({
-    data: drugTypeName + " with a description of: " + drugTypeDescription
+    data: drug
 });
 
 exerciseData = new ROSLIB.Message({
-    data: exerciseTypeName + " with a description of: " + exerciseTypeDescription
+    data: exercise
 });
 
 miscData = new ROSLIB.Message({
-    data: miscTypeName + " with a description of: " + miscTypeDescription
+    data: misc
+});
+
+var builder = [meal, drug, exercise, misc];
+var intro;
+if (numOfTodoItems !== 0) {
+    intro = "Hi. You have " +
+        numItems.data[0].toString() +
+        " items on your To do list. With " +
+        numItems.data[1].toString() +
+        " items not done. Here is a summary: ";
+    for (var tType in builder) {
+        if (builder.hasOwnProperty(tType)) {
+            if (builder[tType] !== " with a description of: . ") {
+                intro += builder[tType];
+            }
+
+        }
+    }
+}
+introData = new ROSLIB.Message({
+    data:  intro
+
 });
 
 
@@ -69,7 +95,11 @@ itemsListener = new ROSLIB.Topic({
     name: '/ItemsPublisher',
     messageType: 'std_msgs/Int32MultiArray'
 });
-itemsListener.publish(numItems);
+if (numOfTodoItems !== 0)
+{
+    itemsListener.publish(numItems);
+}
+
 
 
 mealListener = new ROSLIB.Topic({
@@ -77,7 +107,10 @@ mealListener = new ROSLIB.Topic({
     name: '/MealPublisher',
     messageType: 'std_msgs/String'
 });
-mealListener.publish(mealData);
+if (mealData.data !== " with a description of: . ") {
+    mealListener.publish(mealData);
+}
+
 
 
 drugListener = new ROSLIB.Topic({
@@ -85,7 +118,10 @@ drugListener = new ROSLIB.Topic({
     name: '/DrugPublisher',
     messageType: 'std_msgs/String'
 });
-drugListener.publish(drugData);
+if (drugData.data !== " with a description of: . ") {
+    drugListener.publish(drugData);
+}
+
 
 
 exerciseListener = new ROSLIB.Topic({
@@ -93,7 +129,10 @@ exerciseListener = new ROSLIB.Topic({
     name: '/ExercisePublisher',
     messageType: 'std_msgs/String'
 });
-exerciseListener.publish(exerciseData);
+if (exerciseData.data !== " with a description of: . ") {
+    exerciseListener.publish(exerciseData);
+}
+
 
 
 miscListener = new ROSLIB.Topic({
@@ -101,7 +140,18 @@ miscListener = new ROSLIB.Topic({
     name: '/MiscPublisher',
     messageType: 'std_msgs/String'
 });
-miscListener.publish(miscData);
+if (miscData.data !== " with a description of: . ") {
+    miscListener.publish(miscData);
+}
+
+introListener = new ROSLIB.Topic({
+    ros: ros,
+    name: '/IntroPublisher',
+    messageType: 'std_msgs/String'
+});
+if (numOfTodoItems !== 0) {
+    introListener.publish(introData);
+}
 
 langListener = new ROSLIB.Topic({
     ros: ros,

@@ -6,7 +6,8 @@ import pyaudio
 import wave
 
 THRESHOLD = 500
-CHUNK_SIZE = 1024
+CHUNK_SIZE = 1024 #* 8
+print CHUNK_SIZE
 FORMAT = pyaudio.paInt16
 RATE = 44100
 
@@ -66,10 +67,11 @@ def record():
     it without getting chopped off.
     """
     p = pyaudio.PyAudio()
+    #print([p.get_device_info_by_index(i) for i in range(p.get_device_count())])
     stream = p.open(format=FORMAT, channels=1, rate=RATE,
         input=True, output=True,
         frames_per_buffer=CHUNK_SIZE)
-
+#,stream_callback=FillBuffer
     num_silent = 0
     snd_started = False
 
@@ -77,7 +79,13 @@ def record():
 
     while 1:
         # little endian, signed short
-        snd_data = array('h', stream.read(CHUNK_SIZE))
+        try:
+            snd_data = array('h', stream.read(CHUNK_SIZE))
+        except IOError as ex:
+            if ex[1] != pyaudio.paInputOverflowed:
+                raise
+            data = '\x00' * CHUNK_SIZE
+        
         if byteorder == 'big':
             snd_data.byteswap()
         r.extend(snd_data)
@@ -96,12 +104,15 @@ def record():
     stream.stop_stream()
     stream.close()
     p.terminate()
-
+    
     r = normalize(r)
     r = trim(r)
     r = add_silence(r, 0.5)
     return sample_width, r
-
+def FillBuffer(in_data, frame_count, time_info, status_flags):
+        #Continuously collect data from the audio stream, into the buffer."""
+        #self._buff.put(in_data)
+        return None, pyaudio.paContinue
 def record_to_file(path):
     "Records from the microphone and outputs the resulting data to 'path'"
     sample_width, data = record()

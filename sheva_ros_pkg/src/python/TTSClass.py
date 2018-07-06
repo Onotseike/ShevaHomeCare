@@ -16,9 +16,10 @@ class TTSClass:
     path = "/sts/v1.0/issueToken"
 
     AccessToken = ""
-
+    _connection = httplib.HTTPSConnection("westus.tts.speech.microsoft.com")
     #Constructor
     def __init__(self): 
+
         self.GetAccessToken(TTSClass.AccessTokenHost,TTSClass.path,TTSClass.params,TTSClass.headers)
     
 
@@ -38,7 +39,10 @@ class TTSClass:
         print "Reason for Response : " + _reponseResult.reason
         print 
         #print "Access Token obtained is : " + TTSClass.AccessToken
-        
+      
+    def ReAuthenticate(self):
+        self.GetAccessToken(TTSClass.AccessTokenHost,TTSClass.path,TTSClass.params,TTSClass.headers)
+    
 
     def GetTTSData(self, dataText):  
 
@@ -61,24 +65,27 @@ class TTSClass:
 
         print "Connecting to Server to Synthesize the Wave"
 
-        _connection = httplib.HTTPSConnection("westus.tts.speech.microsoft.com")
-        _connection.request("POST", "/cognitiveservices/v1", ET.tostring(body),_headers)
+        TTSClass._connection = httplib.HTTPSConnection("westus.tts.speech.microsoft.com")
+        TTSClass._connection.request("POST", "/cognitiveservices/v1", ET.tostring(body),_headers)
 
-        _responseResult = _connection.getresponse()
+        _responseResult = TTSClass._connection.getresponse()
         _data = _responseResult.read()
 
         print "Status of Request : " + str(_responseResult.status)
         print
         print "Reason for Response : " + _responseResult.reason
         print 
+        return _responseResult,_data
+        
 
+    def TTSSpeak(self,response,data):
+        _data= data
         _pyAudio = pyaudio.PyAudio()
         _stream = _pyAudio.open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
         _stream.write(_data)
         _stream.close()
-        _connection.close()
-
-
+        TTSClass._connection.close()
+    
 def main():
     testClass = TTSClass()
     #testClass.RecordSpeech()
