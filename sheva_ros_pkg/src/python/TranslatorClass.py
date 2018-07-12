@@ -1,7 +1,13 @@
 import httplib, urllib, uuid, json
 
 class TranslatorClass:
-
+    #Variables & Constants
+    _translatorLanguage = {
+        "english" : "en",
+        "spanish" : "es",
+        "italian" : "it"
+        }
+    
     def __init__(self):
         self.subscriptionKey = "629dcd9ccd724db2bf734064980133fe"
         self.host = "api.cognitive.microsofttranslator.com"

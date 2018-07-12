@@ -2,9 +2,22 @@
 import httplib, urllib, base64, json
 
 
-
 class LUISClass:
     #Variables & Constants
+    _intentKeyParams = {
+    "CRUDTodolist" : ["crudMethod", "builtin.ordinal", "builtin.number", "itemType", "todoStatus"],
+    "CallCareGiver" : [""],
+    "Communication.Confirm" : [""],
+    "Date.Date" : [""],
+    "Date.Time" : [""],
+    "Exercise" : ["exerciseType"],
+    "LanguageChange" : ["language"],
+    "QueryTodoList" : ["crudMethod", "builtin.ordinal", "builtin.number", "itemType"],
+    "Translate.Translate" : [""],
+    "Weather.GetCondition" : ["Weather.Location"],
+    "Weather.GetForecast" : ["Weather.Location"]
+    }
+
     _appId = "da0449d6-b1e6-4e9d-b2df-dd1eba1f7c11"
     _appVersion = "0.1"
     _luisName = "ShevaLUIS"
@@ -65,13 +78,32 @@ class LUISClass:
         finally:
             _connection.close()
 
+    def IntentEntitiesExtractor(self, luisQueryResult):
+        result = eval(luisQueryResult)
+        #print luisQueryResult
+        intentName = result["topScoringIntent"]["intent"]
 
+        entityParams = []
+        for entity in result["entities"]:
+            if entity["type"] in LUISClass._intentKeyParams[intentName]:
+                if entity["type"] !=  "Weather.Location":
+                    entityParams.append( {entity["type"]:entity["resolution"].get("values", entity["resolution"].get("value"))[0]})
+                else:
+                    entityParams.append({entity["type"]: entity["entity"]})
+        
+        return intentName, entityParams
+    
 
     
 def main():
     testClass = LUISClass()
-    result = testClass.QueryLUIS('get the first three items on my todo list')
-    print result
+    luisQueryResult = testClass.QueryLUIS("what is the weather in zurich")
+    intentName, entityParams = testClass.IntentEntitiesExtractor(luisQueryResult)
+
+    print intentName
+
+    print entityParams
+
 
 if __name__ == '__main__':
     main()

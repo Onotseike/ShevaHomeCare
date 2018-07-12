@@ -23,16 +23,21 @@ class STTClass:
         password='ntzBRUkuU7Li',
         url='https://stream.watsonplatform.net/speech-to-text/api')
 
+    _languageModels = {
+        "english" : "en-US_BroadbandModel",
+        "spanish" : "es-ES_BroadbandModel",
+        "italian" : "en-US_BroadbandModel"
+    }
     #print(json.dumps(speechToText.list_models(), indent=2))
 
    # print(json.dumps(speechToText.get_model('en-US_BroadbandModel'), indent=2))
-
     #Constructor
     def __init__(self):
         self.audiofile = 'audio.wav'
         self.speechToText = STTClass.speechToText
         self.recognizeCallback = MyRecognizeCallback()
         self.transcribedText = ''
+        self.language = "english"
         #self.lang_model = lang
         print "Speech to Text Object Created"
 
@@ -43,7 +48,7 @@ class STTClass:
 
     def TranscribeSpeech(self,):
         with open(join(dirname(__file__),self.audiofile),'rb') as audio_file:
-            transcribedResult = self.speechToText.recognize(audio=audio_file, content_type='audio/wav', timestamps=False, word_confidence=False)           
+            transcribedResult = self.speechToText.recognize(model=STTClass._languageModels[self.language], audio=audio_file, content_type='audio/wav', timestamps=False, word_confidence=False)           
 
             #print json.dumps(transcribedResult,indent=2)
             print 
@@ -52,7 +57,7 @@ class STTClass:
         
     def TranscribeSpeechWebSocket(self):
         with open(join(dirname(__file__),self.audiofile),'rb') as audio_file:
-             self.speechToText.recognize_with_websocket(audio=audio_file, recognize_callback=self.recognizeCallback)
+             self.speechToText.recognize_with_websocket(audio=audio_file,model=STTClass._languageModels[self.language], recognize_callback=self.recognizeCallback)
         
         self.transcribedText = self.recognizeCallback.GetTranscribedText()
 

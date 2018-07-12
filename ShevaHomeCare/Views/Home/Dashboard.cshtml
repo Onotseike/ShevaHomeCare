@@ -42,15 +42,15 @@
                     <div>Select Your Language of Choice</div>
 
                     <div class="ui radio checkbox">
-                        <input type="radio" name="lang" value="en-US" checked="checked">
+                        <input type="radio" name="lang" value="english" checked="checked">
                         <label> English </label>
                     </div>
                     <div class="ui radio checkbox">
-                        <input type="radio" name="lang" value="es-ES">
+                        <input type="radio" name="lang" value="spanish">
                         <label class="ui huge"> Spanish </label>
                     </div>
                     <div class="ui radio checkbox">
-                        <input type="radio" name="lang" value="it-IT">
+                        <input type="radio" name="lang" value="italian">
                         <label> Italian </label>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                             </e-datamanager>*@
 
                         <e-kanbancolumns>
-                            <e-kanbancolumn header-text="Backlog" key=@(new List<string>() {"Open"})>
+                            <e-kanbancolumn header-text="New" key=@(new List<string>() {"Open"})>
                             </e-kanbancolumn>
                             <e-kanbancolumn header-text="In Progress" key=@(new List<string>() {"InProgress"})></e-kanbancolumn>
                             <e-kanbancolumn header-text="Done" key=@(new List<string>() {"Close"})></e-kanbancolumn>
