@@ -46,13 +46,13 @@ class DialogManager:
         3: "Hello love"
     }
     _days = {
-        "monday": 1,
-        "tuesday": 2,
-        "wednesday": 3,
-        "thursday": 4,
-        "friday": 5,
-        "saturday": 6,
-        "sunday": 7
+        0:"monday",
+        1:"tuesday",
+        2:"wednesday",
+        3:"thursday",
+        4:"friday",
+        5:"saturday",
+        6:"sunday"
     }
     _month = {
         1: "january",
@@ -206,30 +206,23 @@ class DialogManager:
         currentDate = datetime.datetime.now()
         if intentName == "Date.Time":
             result = (currentDate.hour, currentDate.minute)
-            dataText = "The time is " + result[0] + " " + result[1]
+            dataText = "The time is " + str(result[0]) + " " + str(result[1])
             self.TTSSpeakLanguage(dataText)
         else:
             result = (currentDate.year, currentDate.month,
-                      currentDate.day, currentDate.weekday+1)
-            dataText = "Today is " + " " + DialogManager._days[result[3]] + " the " + \
-                DialogManager._dayNumber[result[2]] + " of " + \
-                DialogManager._month[result[1]] + " " + result[0]
+                      currentDate.day, currentDate.weekday())
+            dataText = "Today is " + " " + DialogManager._days[result[3]] + " the " + DialogManager._dayNumber[result[2]] + " of " + DialogManager._month[result[1]] + " " + str(result[0])
             self.TTSSpeakLanguage(dataText)
 
     ######### State Switching fxns #############
 
     def StateSwitcher(self, intentName, entityParams):
         if intentName == "CRUDTodolist":
-            crud = DialogManager._crudValues.get(
-                entityParams[0].get("crudMethod", "set"), "set")
-            item = DialogManager._itemTypeValues.get(
-                entityParams[1].get("itemType", "all"), "all")
-            number = int(entityParams[2].get(
-                "builtin.number", entityParams[2].get("builtin.ordinal", "1")))
-            ordinal = int(entityParams[3].get(
-                "builtin.ordinal", entityParams[3].get("builtin.number", "1")))
-            status = DialogManager._todoStatus.get(
-                entityParams[4].get("todoStatus", "Open"), "Open")
+            crud = DialogManager._crudValues.get([entity["crudMethod"] if entity.keys()[0] == "crudMethod" else "set" for entity in entityParams][0])
+            item = DialogManager._itemTypeValues.get([entity["itemType"] if entity.keys()[0] == "itemType" else "all" for entity in entityParams][0])
+            number = int([entity["builtin.number"] if entity.keys()[0] == "builtin.number" else "1" for entity in entityParams][0])
+            ordinal = int([entity["builtin.ordinal"] if entity.keys()[0] == "builtin.ordinal" else "1" for entity in entityParams][0])
+            status = DialogManager._todoStatus.get([entity["todoStatus"] if entity.keys()[0] == "todoStatus" else "Open" for entity in entityParams][-2])
             msgArray = [crud, item, number, ordinal, status]
             self.TTSSpeakLanguage("Updating your To do list")
             return intentName, msgArray
@@ -245,6 +238,7 @@ class DialogManager:
             self.GetDateTime(intentName)
             return intentName, []
         elif intentName == "Exercise":
+            if len(entityParams) == 0: entityParams = [{"exerciseType":"mental"}]
             if entityParams[0].get("exerciseType", "") == "mental":
                  wb.open_new_tab(
                      "https://www.brain-games.co.uk/game/Brain+Trainer")
@@ -253,26 +247,26 @@ class DialogManager:
                     "https://www.nhs.uk/Tools/Documents/NHS_ExercisesForOlderPeople.pdf")
             return intentName, []
         elif intentName == "LanguageChange":
+            if len(entityParams) == 0: entityParams = [{"language":"engish"}]
             self._language = entityParams[0].get("language", "english")
             # send language data to web app and refresh page to reflect change
+            self.TTSSpeakLanguage("Updating your language preferences, please wait")
             return intentName, [self._language]
         elif intentName == "QueryTodoList":
             # params [ordinal_resolution value, number_resolution value, item_type]
             # create message to send query needs
-            crud = DialogManager._crudValues.get(
-                entityParams[0].get("crudMethod", "get"), "get")
-            item = DialogManager._itemTypeValues.get(
-                entityParams[1].get("itemType", "all"), "all")
-            number = int(entityParams[2].get(
-                "builtin.number", entityParams[2].get("builtin.ordinal", "1")))
-            ordinal = int(entityParams[3].get(
-                "builtin.ordinal", entityParams[3].get("builtin.number", "1")))
+
+            crud = DialogManager._crudValues.get([entity["crudMethod"] if entity.keys()[0] == "crudMethod" else "set" for entity in entityParams][0])
+            item = DialogManager._itemTypeValues.get([entity["itemType"] if entity.keys()[0] == "itemType" else "all" for entity in entityParams][0])
+            number = int([entity["builtin.number"] if entity.keys()[0] == "builtin.number" else "1" for entity in entityParams][0])
+            ordinal = int([entity["builtin.ordinal"] if entity.keys()[0] == "builtin.ordinal" else "1" for entity in entityParams][0])
             msgArray = [crud, item, number, ordinal]
             self.TTSSpeakLanguage("Querying your To do list")
             return intentName, msgArray
         elif intentName == "Translate.Translate":
             return intentName, []
         elif intentName == "Weather.GetCondition":
+            if len(entityParams) == 0: entityParams = [{"Weather.Location":"London"}]
             weatherObservation = self._weatherObject.weather_at_place(
                 entityParams[0].get("Weather.Location", "London"))
             weather = weatherObservation.get_weather()
@@ -281,7 +275,9 @@ class DialogManager:
             self.TTSSpeakLanguage(dataText)
             return intentName, []
         elif intentName == "Weather.GetForecast":
+            if len(entityParams) == 0: entityParams = [{"Weather.Location":"London"}]
             location = entityParams[0].get("Weather.Location", "")
+            self.TTSSpeakLanguage("Pulling up the weather forecast. please wait")
             wb.open_new_tab(
                 "https://www.bing.com/search?q=bing+weather+forecast+" + location)
             return intentName, []
@@ -307,7 +303,7 @@ class DialogManager:
 
     def LUISUnderstand(self, transcribedSpeech):
         luisQueryResult = self._luisObject.QueryLUIS(transcribedSpeech)
-
+        #print luisQueryResult
         intentName, entityParams = self._luisObject.IntentEntitiesExtractor(luisQueryResult)
 
         print intentName

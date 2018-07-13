@@ -21,7 +21,7 @@ global langSelect, startSTT,dataText
 global onLogin
 
 global _dialogManager
-_dialogManager = DialogManager("english")
+#_dialogManager = DialogManager(langSelect)
 #ttsObject = TTSClass()
 #sttObject = STTClass()
 
@@ -77,8 +77,8 @@ def IntroDataCallBack(data):
     print dataText
     if _dialogManager == None:
             _dialogManager = DialogManager(langSelect)
-    #if onLogin == True:
-        #_dialogManager.SetCurrentSate("LoginState")
+    if onLogin == True:
+        _dialogManager.SetCurrentSate("LoginState")
     intent, msgArray = _dialogManager.IntroGreeting("Paula", dataText)
     #Execute Action based on intentName
     #_dialogManager.TTSSpeakLanguage(dataText)
@@ -93,7 +93,7 @@ def StartSTTDataCallback(data):
         if _dialogManager == None:
             _dialogManager = DialogManager(langSelect)
         luisFeed = _dialogManager.STTLanguage()
-        intentName, entityParams = _dialogManager.LUISUnderstand(_dialogManager.TransLateText("english",luisFeed))
+        intentName, entityParams = _dialogManager.LUISUnderstand(luisFeed)
         intentName, msgArray = _dialogManager.StateSwitcher(intentName, entityParams)
         
         #Switching statement based on intent

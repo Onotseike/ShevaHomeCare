@@ -70,7 +70,7 @@ miscData = new ROSLIB.Message({
 var builder = [meal, drug, exercise, misc];
 var intro;
 if (numOfTodoItems !== 0) {
-    intro = "Hi. You have " +
+    intro = "You have " +
         numItems.data[0].toString() +
         " items on your To do list. With " +
         numItems.data[1].toString() +
