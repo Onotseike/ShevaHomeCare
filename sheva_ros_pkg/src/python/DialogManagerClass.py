@@ -1,4 +1,4 @@
-import datetime
+import datetime,time
 import webbrowser as wb
 import pyowm
 import pyaudio
@@ -7,6 +7,8 @@ from xml.etree import ElementTree as ET
 from os.path import join, dirname
 from TranslatorClass import TranslatorClass
 from TTSClass import TTSClass
+from STTClass import STTClass
+from LUISClass import LUISClass
 #######
 
 
@@ -27,22 +29,22 @@ class DialogManager:
         "Weather.GetForecast": "GeneralState",
         "CallInProgress": "CallState",
         "FAQs": "InfoState"
-        }
+    }
     _languageOptions = {
         "english": "en-US",
         "spanish": "es-ES",
         "italian": "it-IT"
-        }
+    }
     _translatorLanguage = {
         "english": "en",
         "spanish": "es",
         "italian": "it"
-        }
+    }
     _greetings = {
         1: "Hi ",
         2: "Hello ",
         3: "Hello love"
-        }
+    }
     _days = {
         "monday": 1,
         "tuesday": 2,
@@ -51,7 +53,7 @@ class DialogManager:
         "friday": 5,
         "saturday": 6,
         "sunday": 7
-        }
+    }
     _month = {
         1: "january",
         2: "february",
@@ -65,7 +67,7 @@ class DialogManager:
         10: "october",
         11: "november",
         12: "december"
-        }
+    }
     _dayNumber = {
         1: "first",
         2: "second",
@@ -98,23 +100,23 @@ class DialogManager:
         29: "twenty ninth",
         30: "thirtieth",
         31: " thirty first"
-        }
+    }
     _crudValues = {
         "get": 0,
         "set": 1
-        }
+    }
     _itemTypeValues = {
         "meal": 0,
         "exercise": 1,
         "drug": 2,
         "general": 3,
         "all": 4
-        }
+    }
     _todoStatus = {
         "Open": 0,
         "InProgress": 1,
         "Close": 2
-        }
+    }
 
     ############### Constructor ###################
     def __init__(self, language):
@@ -127,6 +129,8 @@ class DialogManager:
         self._weatherObject = pyowm.OWM("955ad4192620bbe51f557e76c251df2b")
         self._ttsObject = TTSClass()
         self._translatorObject = TranslatorClass()
+        self._sttObject = STTClass(language)
+        self._luisObject = LUISClass()
 
     ####### Get  and Set Current State ########
 
@@ -170,7 +174,10 @@ class DialogManager:
 
     def IntroGreeting(self, username, statSummary):
         # Call TTS Based on Language
-        dataText = DialogManager._greetings + username
+        if username == "":
+            dataText = DialogManager._greetings[3]
+        else:
+            dataText = DialogManager._greetings[2] + username
         self.TTSSpeakLanguage(dataText)
 
         # If state is entry state break else ask what can i do for you
@@ -179,15 +186,21 @@ class DialogManager:
             # Read Stats
             self.TTSSpeakLanguage(dataText)
             self._currentState = DialogManager._dialogState["DefaultState"]
-            return self._currentState
+            return "None",[]
 
         else:
             dataText = "How can I help you ?"
             # Ask how can i help
             self.TTSSpeakLanguage(dataText)
-            # Record Speech, Transcribe, send to LUIS, call state Switcher
+            self._currentState = DialogManager._dialogState["FAQs"]
+            time.sleep(5)
+            transcribedSpeech = self.STTLanguage()
+            intent, entities = self.LUISUnderstand(transcribedSpeech)
+            intentName, msgArray = self.StateSwitcher(intent, entities)
+            return intentName, msgArray
 
-        return self._currentState
+
+            # Record Speech, Transcribe, send to LUIS, call state Switcher        
 
     def GetDateTime(self, intentName):
         currentDate = datetime.datetime.now()
@@ -200,14 +213,24 @@ class DialogManager:
                       currentDate.day, currentDate.weekday+1)
             dataText = "Today is " + " " + DialogManager._days[result[3]] + " the " + \
                 DialogManager._dayNumber[result[2]] + " of " + \
-                    DialogManager._month[result[1]] + " " + result[0]
+                DialogManager._month[result[1]] + " " + result[0]
             self.TTSSpeakLanguage(dataText)
 
     ######### State Switching fxns #############
 
     def StateSwitcher(self, intentName, entityParams):
         if intentName == "CRUDTodolist":
-            msgArray = [DialogManager._crudValues.get(entityParams[0].get("crudMethod", "set"), "set"), DialogManager._itemTypeValues.get(entityParams[1].get("itemType", "all"), "all"), int(entityParams[2].get("builtin.number", entityParams[2].get("builtin.ordinal", "1")), int(entityParams[3].get("builtin.ordinal", entityParams[3].get("builtin.number", "1")), DialogManager._todoStatus.get(entityParams[4].get("todoStatus", "Open"), "Open")]
+            crud = DialogManager._crudValues.get(
+                entityParams[0].get("crudMethod", "set"), "set")
+            item = DialogManager._itemTypeValues.get(
+                entityParams[1].get("itemType", "all"), "all")
+            number = int(entityParams[2].get(
+                "builtin.number", entityParams[2].get("builtin.ordinal", "1")))
+            ordinal = int(entityParams[3].get(
+                "builtin.ordinal", entityParams[3].get("builtin.number", "1")))
+            status = DialogManager._todoStatus.get(
+                entityParams[4].get("todoStatus", "Open"), "Open")
+            msgArray = [crud, item, number, ordinal, status]
             self.TTSSpeakLanguage("Updating your To do list")
             return intentName, msgArray
         elif intentName == "CallCareGiver":
@@ -230,28 +253,35 @@ class DialogManager:
                     "https://www.nhs.uk/Tools/Documents/NHS_ExercisesForOlderPeople.pdf")
             return intentName, []
         elif intentName == "LanguageChange":
-            self._language=entityParams[0].get("language", "english")
+            self._language = entityParams[0].get("language", "english")
             # send language data to web app and refresh page to reflect change
             return intentName, [self._language]
         elif intentName == "QueryTodoList":
             # params [ordinal_resolution value, number_resolution value, item_type]
             # create message to send query needs
-            msgArray=[DialogManager._crudValues.get(entityParams[0].get("crudMethod", "set"), "set"), DialogManager._itemTypeValues.get(entityParams[1].get("itemType", "all"), "all"), int(entityParams[2].get("builtin.number", entityParams[2].get("builtin.ordinal", "1")), int(entityParams[3].get("builtin.ordinal", entityParams[3].get("builtin.number", "1"))]
-
+            crud = DialogManager._crudValues.get(
+                entityParams[0].get("crudMethod", "get"), "get")
+            item = DialogManager._itemTypeValues.get(
+                entityParams[1].get("itemType", "all"), "all")
+            number = int(entityParams[2].get(
+                "builtin.number", entityParams[2].get("builtin.ordinal", "1")))
+            ordinal = int(entityParams[3].get(
+                "builtin.ordinal", entityParams[3].get("builtin.number", "1")))
+            msgArray = [crud, item, number, ordinal]
             self.TTSSpeakLanguage("Querying your To do list")
             return intentName, msgArray
         elif intentName == "Translate.Translate":
             return intentName, []
         elif intentName == "Weather.GetCondition":
-            weatherObservation=self._weatherObject.weather_at_place(
+            weatherObservation = self._weatherObject.weather_at_place(
                 entityParams[0].get("Weather.Location", "London"))
-            weather=weatherObservation.get_weather()
-            dataText="The current weather has a  max temperature of " + str(weather.get_temperature('celsius')["temp_max"]) + ", a min temperature of " + str(weather.get_temperature(
+            weather = weatherObservation.get_weather()
+            dataText = "The current weather has a  max temperature of " + str(weather.get_temperature('celsius')["temp_max"]) + ", a min temperature of " + str(weather.get_temperature(
                 'celsius')["temp_min"]) + ", an average temperature of " + str(weather.get_temperature('celsius')["temp"]) + " all in celsius and a humidity of " + str(weather.get_humidity())
             self.TTSSpeakLanguage(dataText)
             return intentName, []
         elif intentName == "Weather.GetForecast":
-            location=entityParams[0].get("Weather.Location", "")
+            location = entityParams[0].get("Weather.Location", "")
             wb.open_new_tab(
                 "https://www.bing.com/search?q=bing+weather+forecast+" + location)
             return intentName, []
@@ -259,13 +289,27 @@ class DialogManager:
             # None NO
             return intentName, []
 
-
-
-
-
-
     ####### Translate to Available Languages ##########
+
     def TransLateText(self, language, dataText):
-        textTranslator=TranslatorClass()
+        textTranslator = TranslatorClass()
         return textTranslator.TranslateText(DialogManager._translatorLanguage[language], dataText)
 
+    ####### STT Language ########
+    def STTLanguage(self):
+        self._sttObject.RecordSpeech()
+        self._sttObject.TranscribeSpeech()
+        luisFeed = self._sttObject.GetTranscribedText()
+        if self._language == "english":
+            return luisFeed
+        else:
+            return self.TransLateText(self._language,luisFeed)
+
+    def LUISUnderstand(self, transcribedSpeech):
+        luisQueryResult = self._luisObject.QueryLUIS(transcribedSpeech)
+
+        intentName, entityParams = self._luisObject.IntentEntitiesExtractor(luisQueryResult)
+
+        print intentName
+        print entityParams
+        return intentName, entityParams

@@ -158,7 +158,7 @@ langListener = new ROSLIB.Topic({
     name: '/LangPublisher',
     messageType: 'std_msgs/String'
 });
-langdata = "";
+langdata = $('input[name=lang]:checked').val();
 function langPublish() {
     console.log("Writing Language DATA");
     console.log(langdata);
@@ -167,7 +167,7 @@ function langPublish() {
     });
     langListener.publish(langData);
 };
-
+langPublish()
 sttListener = new ROSLIB.Topic({
     ros: ros,
     name: '/StartSTTPublisher',

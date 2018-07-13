@@ -1,7 +1,8 @@
 {
     "python.pythonPath": "C:\\Python27amd64\\python.exe",
     "cSpell.words": [
-        "fxns"
+        "fxns",
+        "pyowm"
     ],
     "python.formatting.provider": "autopep8"
 }

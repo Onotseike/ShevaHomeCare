@@ -32,12 +32,12 @@ class STTClass:
 
    # print(json.dumps(speechToText.get_model('en-US_BroadbandModel'), indent=2))
     #Constructor
-    def __init__(self):
+    def __init__(self,language):
         self.audiofile = 'audio.wav'
         self.speechToText = STTClass.speechToText
         self.recognizeCallback = MyRecognizeCallback()
         self.transcribedText = ''
-        self.language = "english"
+        self.language = language
         #self.lang_model = lang
         print "Speech to Text Object Created"
 
