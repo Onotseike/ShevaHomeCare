@@ -79,7 +79,17 @@ def IntroDataCallBack(data):
             _dialogManager = DialogManager(langSelect)
     #if onLogin == True:
         #_dialogManager.SetCurrentSate("LoginState")
-    intent, msgArray = _dialogManager.IntroGreeting("Paula", dataText)
+    intentName, msgArray = _dialogManager.IntroGreeting("Paula", dataText)
+    if intentName == "CRUDTodolist" or intentName == "QueryTodoList":
+        queryArray = Int32MultiArray(data=msgArray)
+        #todoListQueryPublisher.publish(queryArray)
+        TodoListPublish(queryArray)
+    elif intentName == "LanguageChange":
+        language = msgArray[0] #_dialogManager.GetCurrentLanguage()
+        languangeChangePublisher.publish(language)
+
+    else:
+        pass
     #Execute Action based on intentName
     #_dialogManager.TTSSpeakLanguage(dataText)
     #TTSSpeak()
@@ -97,22 +107,43 @@ def StartSTTDataCallback(data):
         intentName, msgArray = _dialogManager.StateSwitcher(intentName, entityParams)
         
         #Switching statement based on intent
+        if intentName == "CRUDTodolist" or intentName == "QueryTodoList":
+            queryArray = Int32MultiArray(data=msgArray)
+            #todoListQueryPublisher.publish(queryArray)
+            TodoListPublish(queryArray)
+        elif intentName == "LanguageChange":
+            language = msgArray[0] #_dialogManager.GetCurrentLanguage()
+            languangeChangePublisher.publish(language)
+
+        else:
+            pass
         #sttObject.RecordSpeech()
         #sttObject.TranscribeSpeech()
         #sttObject.GetTranscribedText()
         #sttObject.TranscribeSpeechWebSocket()
         #sttObject.GetTranscribedText()
         
+def QueryResultCallBack(data):
+    global dataText, _dialogManager, onLogin
+    rospy.loginfo(rospy.get_caller_id() + "Echoed %s", data.data)
+    dataText = data.data
+    print dataText
+    _dialogManager.TTSSpeakLanguage(dataText)
     
+    
+  
 
-#Initialize ROS Node and Subscriber
+#Initialize ROS Node Publishers and Subscribers
 
 def ROSSetup():
-    global onLogin
+    global onLogin,todoListQueryPublisher,languangeChangePublisher
     rospy.init_node('sheva_node_handle', anonymous=True)
 
-    langSubscriber = rospy.Subscriber(
-        "/LangPublisher", String, LangDataCallBack)
+    todoListQueryPublisher = rospy.Publisher(
+        '/todoListQueryPublisher', Int32MultiArray, queue_size=10)
+    languangeChangePublisher = rospy.Publisher("/LanguageChangePublisher", String, queue_size=10)
+
+    langSubscriber = rospy.Subscriber("/LangPublisher", String, LangDataCallBack)
 
     itemsSubscriber = rospy.Subscriber("/ItemsPublisher",Int32MultiArray,ItemsDataCallBack)
     #print 1
@@ -128,6 +159,7 @@ def ROSSetup():
     #print 5
     
     sttSubscriber = rospy.Subscriber("/StartSTTPublisher", Bool, StartSTTDataCallback)
+    rospy.Subscriber("/QueryResultPublisher", String, QueryResultCallBack)
     
     onLogin = True
 
@@ -144,7 +176,9 @@ def TTSSpeak():
         ttsResponse,data = ttsObject.GetTTSData(dataText)
     ttsObject.TTSSpeak(ttsResponse,data)
 
-
+def TodoListPublish(data):
+    global todoListQueryPublisher
+    todoListQueryPublisher.publish(data)
 
 
 

@@ -13,6 +13,7 @@ namespace ShevaHomeCare.Models
         IEnumerable<ApplicationUser> GetPatientUsers();
 
         void AddKabanItem(KabanItem kabanItem);
+        void UpdateKabanItem(KabanItem item);
         IEnumerable<KabanItem> GetAllKabanItems();
 
         IEnumerable<KabanItem> GetAllKabanItemsForPatient(string username);

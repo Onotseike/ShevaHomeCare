@@ -47,6 +47,11 @@ namespace ShevaHomeCare.Models
             _context.KabanItemsData.Add(kabanItem);
         }
 
+        public void UpdateKabanItem(KabanItem item)
+        {
+            _context.KabanItemsData.Update(item);
+        }
+
         public IEnumerable<KabanItem> GetAllKabanItems()
         {
             try

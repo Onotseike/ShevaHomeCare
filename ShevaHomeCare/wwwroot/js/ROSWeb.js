@@ -184,3 +184,65 @@ function startSTTPublish() {
     });
     sttListener.publish(sttData);
 };
+
+queryPublisher = new ROSLIB.Topic({
+    ros: ros,
+    name: "/QueryResultPublisher",
+    messageType: "std_msgs/String"
+});
+
+
+//ROS Subscribers
+querySubscriber = new ROSLIB.Topic({
+    ros: ros,
+    name: "/todoListQueryPublisher",
+    messageType: "std_msgs/Int32MultiArray"
+});
+
+querySubscriber.subscribe(function(message) {
+    console.log("Recieved data " + message.data);
+    if (message.data[0] === 1) {
+        //Set
+        $.ajax(
+            {
+                url: '/Home/ShevaUpdateKaban',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    crud: message.data[0],
+                    item: message.data[1],
+                    number: message.data[2],
+                    ordinal: message.data[3]
+                },
+                success: function () {
+                    console.log("Sheva has updated your list");
+                }
+            });
+        
+    } else {
+        //get
+        $.ajax(
+            {
+                url: '/Home/QueryKaban',
+                type: "GET",
+                dataType: "json",
+                data: {
+                    crud: message.data[0],
+                    item: message.data[1],
+                    number: message.data[2],
+                    ordinal: message.data[3],
+                    status: message.data[4]
+                },
+                success: function(response) {
+                    var result = new ROSLIB.Message(
+                        {
+                            data: response
+                        });
+                    queryPublisher.publish(result);
+                    console.log("Query done " + response);
+
+                }
+            });
+    }
+    
+});

@@ -235,8 +235,81 @@ namespace ShevaHomeCare.Controllers
         }
 
 
+        [HttpGet]
+        [Route("/Home/QueryKaban")]
+        public async Task<IActionResult> QueryKaban(int crud, int item, int number, int ordinal)
+        {
+            var _activeKabanItems = _shevaHcRepo.GetAllKabanItems();
+            var user = await GetCurrentUserAsync();
+            var userKabanData = _activeKabanItems.Where(kData => kData.PatientName == user.FirstName + " " + user.LastName).Select(kData => kData);
+            var kabanItems = userKabanData.ToList();
+            var notDoneKabanItems = kabanItems.Where(kd => kd.Status != "Close").Select(kd => kd).ToList();
+            if (item > 3)
+            {
+                var queryResult = notDoneKabanItems.Skip((ordinal - 1) * number).Take(number);
+                var enumerable = queryResult.ToList();
+                var dataText = "The results for your query is as follows: ";
+                foreach (var kItem in enumerable)
+                {
+                    dataText += kItem.ItemName + " with a description of: " + kItem.KabanitemDescription;
+                }
+                return Json(dataText);
+            }
+            else
+            {
+                var customeKabanItems = notDoneKabanItems.Where(kd => kd.ItemType.ToString() == Enum.GetName(typeof(KabanItemType),item)).Select(kd => kd).Skip((ordinal - 1) * number).Take(number);
+                var enumerable = customeKabanItems.ToList();
+                var dataText = "The results for your query is as follows: ";
+                foreach (var kItem in enumerable)
+                {
+                    dataText += kItem.ItemName + " with a description of: " + kItem.KabanitemDescription+". ";
+                }
+                return Json(dataText);
+            }
 
-        
+           
+        }
+
+        [HttpPost]
+        [Route("/Home/ShevaUpdateKaban")]
+        public async Task<IActionResult> ShevaUpdateKaban(int crud, int item, int number, int ordinal, int status)
+        {
+            var _activeKabanItems = _shevaHcRepo.GetAllKabanItems();
+            var user = await GetCurrentUserAsync();
+            var userKabanData = _activeKabanItems.Where(kData => kData.PatientName == user.FirstName + " " + user.LastName).Select(kData => kData);
+            var kabanItems = userKabanData.ToList();
+            var notDoneKabanItems = kabanItems.Where(kd => kd.Status != "Close").Select(kd => kd).ToList();
+            if (item > 3)
+            {
+                var queryResult = notDoneKabanItems.Skip((ordinal - 1) * number).Take(number);
+                foreach (var query in queryResult)
+                {
+                    //query.Status = Enum.GetName(typeof(StatusType), status);
+                     var qitem = _shevaHcRepo.GetAllKabanItems().SingleOrDefault(kd => kd.KabanItemID == query.KabanItemID);
+                    if (qitem != null) qitem.Status = Enum.GetName(typeof(StatusType), status);
+                    //_shevaHcRepo.UpdateKabanItem(query);   
+                }
+
+                
+            }
+            else
+            {
+                var customeKabanItems = notDoneKabanItems.Where(kd => kd.ItemType.ToString() == Enum.GetName(typeof(KabanItemType), item)).Select(kd => kd).Skip((ordinal - 1) * number).Take(number);
+                foreach (var query in customeKabanItems)
+                {
+                    query.Status = Enum.GetName(typeof(StatusType), status);
+                    _shevaHcRepo.UpdateKabanItem(query);
+                }
+
+            }
+            _shevaHcRepo.SaveDataBaseChanges();
+            return Json("Database Updated by Sheva");
+
+
+        }
+
+
+
         private Task<ApplicationUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);

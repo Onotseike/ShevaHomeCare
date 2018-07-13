@@ -9,6 +9,10 @@ namespace ShevaHomeCare.Models
     {
         Meal,Exercise,Drug,Miscellenous
     }
+    public enum StatusType
+    {
+        Open, InProgress,Close
+    }
 
     public class KabanItem
     {
