@@ -51,8 +51,14 @@ class STTClass:
             transcribedResult = self.speechToText.recognize(model=STTClass._languageModels[self.language], audio=audio_file, content_type='audio/wav', timestamps=False, word_confidence=False)           
 
             #print json.dumps(transcribedResult,indent=2)
-            print 
-            self.transcribedText =  transcribedResult['results'][0]['alternatives'][0]['transcript']
+            #print transcribedResult
+            result  =next(iter(transcribedResult['results']), "")
+            if result != "":
+                self.transcribedText =  transcribedResult['results'][0]['alternatives'][0]['transcript']
+            else:
+                self.transcribedText = ""
+            
+            
         
         
     def TranscribeSpeechWebSocket(self):
@@ -68,7 +74,7 @@ class STTClass:
       
 
 def main():
-    testClass = STTClass()
+    testClass = STTClass("english")
     #testClass.RecordSpeech()
     testClass.TranscribeSpeech()
     testClass.GetTranscribedText()

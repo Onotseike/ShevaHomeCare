@@ -281,7 +281,9 @@ namespace ShevaHomeCare.Controllers
             var notDoneKabanItems = kabanItems.Where(kd => kd.Status != "Close").Select(kd => kd).ToList();
             if (item > 3)
             {
-                var queryResult = notDoneKabanItems.Skip((ordinal - 1) * number).Take(number);
+                var queryResult = notDoneKabanItems.Skip((ordinal - 1) * number).Take(number).ToList();
+                Console.WriteLine(queryResult.Count);
+                Console.WriteLine(queryResult[0]);
                 foreach (var query in queryResult)
                 {
                     //query.Status = Enum.GetName(typeof(StatusType), status);
@@ -303,7 +305,7 @@ namespace ShevaHomeCare.Controllers
 
             }
             _shevaHcRepo.SaveDataBaseChanges();
-            return Json("Database Updated by Sheva");
+            return Json("Your To-do Items Database has been Updated. Please refresh the page to view changes");
 
 
         }

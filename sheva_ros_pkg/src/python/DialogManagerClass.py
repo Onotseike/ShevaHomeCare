@@ -1,4 +1,4 @@
-import datetime,time
+import datetime,time,os
 import webbrowser as wb
 import pyowm
 import pyaudio
@@ -9,8 +9,8 @@ from TranslatorClass import TranslatorClass
 from TTSClass import TTSClass
 from STTClass import STTClass
 from LUISClass import LUISClass
-#######
-
+########
+#roslaunch rosbridge_server rosbridge_websocket.launch
 
 class DialogManager:
 
@@ -195,8 +195,11 @@ class DialogManager:
             self._currentState = DialogManager._dialogState["FAQs"]
             #time.sleep(5)
             transcribedSpeech = self.STTLanguage()
-            intent, entities = self.LUISUnderstand(transcribedSpeech)
-            intentName, msgArray = self.StateSwitcher(intent, entities)
+            if transcribedSpeech == "":
+                self.TTSSpeakLanguage("Sorry I did not catch that. i will stay quiet for now. If you need me, just toggle the start speech button on your Dashbaord.")
+            else:
+                intent, entities = self.LUISUnderstand(transcribedSpeech)
+                intentName, msgArray = self.StateSwitcher(intent, entities)
             return intentName, msgArray
 
 
@@ -218,16 +221,30 @@ class DialogManager:
 
     def StateSwitcher(self, intentName, entityParams):
         if intentName == "CRUDTodolist":
-            crud = DialogManager._crudValues.get([entity["crudMethod"] if entity.keys()[0] == "crudMethod" else "set" for entity in entityParams][0])
-            item = DialogManager._itemTypeValues.get([entity["itemType"] if entity.keys()[0] == "itemType" else "all" for entity in entityParams][0])
-            number = int([entity["builtin.number"] if entity.keys()[0] == "builtin.number" else "1" for entity in entityParams][0])
-            ordinal = int([entity["builtin.ordinal"] if entity.keys()[0] == "builtin.ordinal" else "1" for entity in entityParams][0])
-            status = DialogManager._todoStatus.get([entity["todoStatus"] if entity.keys()[0] == "todoStatus" else "Open" for entity in entityParams][-1])
+            crud = DialogManager._crudValues.get(next(iter( [entity.get("crudMethod") for entity in entityParams if "crudMethod" in entity.keys()]),"set"))
+            
+            item = DialogManager._itemTypeValues.get(next(iter( [entity.get("itemType") for entity in entityParams if "itemType" in entity.keys()]),"all"))
+
+            number = int(next(iter( [entity.get("builtin.number") for entity in entityParams if "builtin.number" in entity.keys()]),"0"))
+
+            ordinal = int(next(iter( [entity.get("builtin.ordinal") for entity in entityParams if "builtin.ordinal" in entity.keys()]),"1"))
+
+            status = DialogManager._todoStatus.get(next(iter([entity.get("todoStatus") for entity in entityParams if "todoStatus" in entity.keys()]),"Open"))
+
+            if number == 0 and ordinal != 0:
+                number = ordinal
+                ordinal = 1
+
             msgArray = [crud, item, number, ordinal, status]
-            self.TTSSpeakLanguage("Updating your To do list")
+            self.TTSSpeakLanguage("Updating your To do list. Please wait")
             return intentName, msgArray
         elif intentName == "CallCareGiver":
             # Call Jaime
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            scriptsDir = os.path.join(dir_path, "..","..","scripts","ShevaMainPage.html")
+            #print(scriptsDir)
+            self.TTSSpeakLanguage("Attempting to connect you to your Care Giver, please wait")
+            wb.open_new_tab(scriptsDir)
             return intentName, []
         elif intentName == "Communication.Confirm":
             return intentName, []
@@ -239,10 +256,13 @@ class DialogManager:
             return intentName, []
         elif intentName == "Exercise":
             if len(entityParams) == 0: entityParams = [{"exerciseType":"mental"}]
+           
             if entityParams[0].get("exerciseType", "") == "mental":
+                 self.TTSSpeakLanguage("Redirecting you to a Brain Game Website. Please wait")
                  wb.open_new_tab(
                      "https://www.brain-games.co.uk/game/Brain+Trainer")
             else:
+                self.TTSSpeakLanguage("Redirecting you to a physical exercise online resource. Please wait")
                 wb.open_new_tab(
                     "https://www.nhs.uk/Tools/Documents/NHS_ExercisesForOlderPeople.pdf")
             return intentName, []
@@ -254,12 +274,18 @@ class DialogManager:
             return intentName, [self._language]
         elif intentName == "QueryTodoList":
             # params [ordinal_resolution value, number_resolution value, item_type]
-            # create message to send query needs
+            # create message to send query needs          
+            
+            crud = DialogManager._crudValues.get(next(iter( [entity.get("crudMethod") for entity in entityParams if "crudMethod" in entity.keys()]),"get"))
+            
+            item = DialogManager._itemTypeValues.get(next(iter( [entity.get("itemType") for entity in entityParams if "itemType" in entity.keys()]),"all"))
 
-            crud = DialogManager._crudValues.get([entity["crudMethod"] if entity.keys()[0] == "crudMethod" else "get" for entity in entityParams][0])
-            item = DialogManager._itemTypeValues.get([entity["itemType"] if entity.keys()[0] == "itemType" else "all" for entity in entityParams][0])
-            number = int([entity["builtin.number"] for entity in entityParams if entity.keys()[0] == "builtin.number"][0])
-            ordinal = int([entity["builtin.ordinal"] for entity in entityParams  if entity.keys()[0] == "builtin.ordinal"][0])
+            number = int(next(iter( [entity.get("builtin.number") for entity in entityParams if "builtin.number" in entity.keys()]),"0"))
+
+            ordinal = int(next(iter( [entity.get("builtin.ordinal") for entity in entityParams if "builtin.ordinal" in entity.keys()]),"1"))
+            if number == 0 and ordinal != 0:
+                number = ordinal
+                ordinal = 1
             msgArray = [crud, item, number, ordinal]
             self.TTSSpeakLanguage("Querying your To do list")
             return intentName, msgArray
@@ -267,11 +293,12 @@ class DialogManager:
             return intentName, []
         elif intentName == "Weather.GetCondition":
             if len(entityParams) == 0: entityParams = [{"Weather.Location":"London"}]
+            self.TTSSpeakLanguage("Colatting the current weather conditions. Please wait")
             weatherObservation = self._weatherObject.weather_at_place(
                 entityParams[0].get("Weather.Location", "London"))
             weather = weatherObservation.get_weather()
-            dataText = "The current weather has a  max temperature of " + str(weather.get_temperature('celsius')["temp_max"]) + ", a min temperature of " + str(weather.get_temperature(
-                'celsius')["temp_min"]) + ", an average temperature of " + str(weather.get_temperature('celsius')["temp"]) + " all in celsius and a humidity of " + str(weather.get_humidity())
+            dataText = "The current weather has a  maximum temperature of " + str(weather.get_temperature('celsius')["temp_max"]) + ", a minimum temperature of " + str(weather.get_temperature(
+                'celsius')["temp_min"]) + ", an average temperature of " + str(weather.get_temperature('celsius')["temp"]) + ", all in celsius and a humidity of " + str(weather.get_humidity())
             self.TTSSpeakLanguage(dataText)
             return intentName, []
         elif intentName == "Weather.GetForecast":
@@ -283,6 +310,7 @@ class DialogManager:
             return intentName, []
         else:
             # None NO
+            self.TTSSpeakLanguage("My Apologies, I am not trained to understand that request yet")
             return intentName, []
 
     ####### Translate to Available Languages ##########
@@ -296,10 +324,14 @@ class DialogManager:
         self._sttObject.RecordSpeech()
         self._sttObject.TranscribeSpeech()
         luisFeed = self._sttObject.GetTranscribedText()
-        if self._language == "english":
-            return luisFeed
+        if luisFeed != "" :
+            if self._language == "english":
+                 return luisFeed
+            else:
+                return self.TransLateText(self._language,luisFeed)
         else:
-            return self.TransLateText(self._language,luisFeed)
+            return ""
+        
 
     def LUISUnderstand(self, transcribedSpeech):
         luisQueryResult = self._luisObject.QueryLUIS(transcribedSpeech)

@@ -2,7 +2,7 @@
 //SDK = require
 //SDK = require(['~/lib/microsoft-speech-browser-sdk/distrib/Speech.Browser.Sdk.js']);
 //var robotURL = 'ws://localhost:9090';
-var robotURL = 'ws://192.168.0.108:9090';
+var robotURL = 'ws://172.20.10.2:9090'; //192.168.0.108
 
 var numOfTodoItems = parseInt($('h5#itemsNum').text());
 var numOfNotDoneItems = parseInt($('h5#notItemsNum').text());
@@ -212,9 +212,15 @@ querySubscriber.subscribe(function(message) {
                     crud: message.data[0],
                     item: message.data[1],
                     number: message.data[2],
-                    ordinal: message.data[3]
+                    ordinal: message.data[3],
+                    status: message.data[4]
                 },
-                success: function () {
+                success: function (response) {
+                    var result = new ROSLIB.Message(
+                        {
+                            data: response
+                        });
+                    queryPublisher.publish(result);
                     console.log("Sheva has updated your list");
                 }
             });
@@ -230,8 +236,8 @@ querySubscriber.subscribe(function(message) {
                     crud: message.data[0],
                     item: message.data[1],
                     number: message.data[2],
-                    ordinal: message.data[3],
-                    status: message.data[4]
+                    ordinal: message.data[3]
+                    
                 },
                 success: function(response) {
                     var result = new ROSLIB.Message(

@@ -10,7 +10,6 @@ from std_msgs.msg import Bool
 from std_msgs.msg import Int32MultiArray
 
 from cv_bridge import CvBridge,  CvBridgeError
-from sheva_ros_pkg.msg import kabanitems
 
 from DialogManagerClass import DialogManager
 from STTClass import STTClass
@@ -89,7 +88,7 @@ def IntroDataCallBack(data):
         languangeChangePublisher.publish(language)
 
     else:
-        pass
+        _dialogManager.SetCurrentSate("DefaultState")
     #Execute Action based on intentName
     #_dialogManager.TTSSpeakLanguage(dataText)
     #TTSSpeak()
@@ -102,9 +101,14 @@ def StartSTTDataCallback(data):
     if startSTT:
         if _dialogManager == None:
             _dialogManager = DialogManager(langSelect)
+
         luisFeed = _dialogManager.STTLanguage()
-        intentName, entityParams = _dialogManager.LUISUnderstand(_dialogManager.TransLateText("english",luisFeed))
-        intentName, msgArray = _dialogManager.StateSwitcher(intentName, entityParams)
+        if luisFeed == "":
+            _dialogManager.TTSSpeakLanguage("My Apologies, I could not understand what was said. Try again.")
+            intentName, msgArray = "None", []
+        else:
+            intentName, entityParams = _dialogManager.LUISUnderstand(_dialogManager.TransLateText("english",luisFeed))
+            intentName, msgArray = _dialogManager.StateSwitcher(intentName, entityParams)
         
         #Switching statement based on intent
         if intentName == "CRUDTodolist" or intentName == "QueryTodoList":
