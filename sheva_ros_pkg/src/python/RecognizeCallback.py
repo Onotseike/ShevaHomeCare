@@ -10,7 +10,7 @@ class MyRecognizeCallback(RecognizeCallback):
         RecognizeCallback.__init__(self)
 
     def on_transcription(self, transcript):
-        # print(transcript[0]['transcript'])
+        #print(transcript)
         pass
 
     def on_connected(self):

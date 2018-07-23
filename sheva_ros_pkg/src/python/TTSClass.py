@@ -1,8 +1,9 @@
-import httplib, urllib, json
+import httplib, urllib, json, string as strg
 import pyaudio, wave
 from xml.etree import ElementTree as ET
 from os.path import join, dirname
 from TranslatorClass import TranslatorClass
+
 
 
 class TTSClass:
@@ -15,7 +16,7 @@ class TTSClass:
         "italian" : ["Microsoft Server Speech Text to Speech Voice (it-IT, Cosimo, Apollo)", "it-it", "Male"]
         }
     
-    apiKey = "569cb77237894b4581bebd1e84de94ff"
+    apiKey = "99bba026d3864a7b8df2290bb7f79fbf"
     params = ""
     headers = {"Ocp-Apim-Subscription-Key": apiKey}
 
@@ -92,7 +93,7 @@ class TTSClass:
         voice.set('{http://www.w3.org/XML/1998/namespace}lang', language)
         voice.set('{http://www.w3.org/XML/1998/namespace}gender', gender)
         voice.set('name', voiceName)
-        voice.text = dataText
+        voice.text = dataText.translate(None, strg.punctuation)
 
 
         _headers = {"Content-type": "application/ssml+xml", 
@@ -128,9 +129,9 @@ def main():
     testClass = TTSClass()
     #testClass.RecordSpeech()
     #testClass.GetAccessToken()
-    #testClass.GetTTSData(' An airport spokesman said more than 110 planes were damaged by hail. You have a meal item on your to do list with a description of: the fish and ginger sauce is in the fridge, warm it up and enjoy.')
+   # testClass.GetTTSData(' An airport spokesman said more than 110 planes were damaged by hail You have a meal item on your to do list with a description of the fish and ginger sauce is in the fridge warm it up and enjoy')
     st = TTSClass._languageVoices["spanish"]
-    text = TranslatorClass().TranslateText(TranslatorClass._translatorLanguage["spanish"],"Hello Paula, I am speaking in another language")
+    text = TranslatorClass().TranslateText(TranslatorClass._translatorLanguage["spanish"],"The current weather has a temperature high of 31 a low of 29 and an average of 30 all in celcius with a humidity of 38")
     response , data = testClass.GetTTSDataLanguage(text, st[1],st[0],st[2])
     testClass.TTSSpeak(response,data)
     

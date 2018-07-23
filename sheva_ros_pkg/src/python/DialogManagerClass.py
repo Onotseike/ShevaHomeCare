@@ -91,15 +91,15 @@ class DialogManager:
         20: "twentieth",
         21: "twenty first",
         22: "twenty second",
-        23: "twenty third",
-        24: "twenty fourth",
-        25: "twenty fifth",
-        26: "twenty sixth",
-        27: "twenty seventh",
-        28: "twenty eighth",
-        29: "twenty ninth",
+        23: "twenty-third",
+        24: "twenty-fourth",
+        25: "twenty-fifth",
+        26: "twenty-sixth",
+        27: "twenty-seventh",
+        28: "twenty-eighth",
+        29: "twenty-ninth",
         30: "thirtieth",
-        31: " thirty first"
+        31: " thirty-first"
     }
     _crudValues = {
         "get": 0,
@@ -159,8 +159,11 @@ class DialogManager:
 
         else:
             # Call TTS Language
+            import string
+            txt =  dataText.translate(None, string.punctuation)
+            print txt
             transText = self._translatorObject.TranslateText(
-                TranslatorClass._translatorLanguage[self._language], dataText)
+                TranslatorClass._translatorLanguage[self._language], txt)
             ttsParams = self._ttsObject._languageVoices[self._language]
             ttsResponse, data = self._ttsObject.GetTTSDataLanguage(
                 transText, ttsParams[1], ttsParams[0], ttsParams[2])
@@ -169,34 +172,42 @@ class DialogManager:
                 ttsResponse, data = self._ttsObject.GetTTSDataLanguage(
                     transText, ttsParams[1], ttsParams[0], ttsParams[2])
             self._ttsObject.TTSSpeak(ttsResponse, data)
+   
+    def TTSSpeakEnglish(self, dataText):
+        ttsResponse, data = self._ttsObject.GetTTSData(dataText)
+        while ttsResponse.status != 200:
+            self._ttsObject.ReAuthenticate()
+            ttsResponse, data = self._ttsObject.GetTTSData(dataText)
+        self._ttsObject.TTSSpeak(ttsResponse, data)
 
     ########## Intro Greeting #############
 
     def IntroGreeting(self, username, statSummary):
         # Call TTS Based on Language
         if username == "":
-            dataText = DialogManager._greetings[3]
+            dataText = DialogManager._greetings[3] + ". "
         else:
-            dataText = DialogManager._greetings[2] + username
-        self.TTSSpeakLanguage(dataText)
+            dataText = DialogManager._greetings[2] + username + ". "
+        #self.TTSSpeakLanguage(dataText)
 
         # If state is entry state break else ask what can i do for you
         if self._currentState == DialogManager._dialogState["LoginState"]:
-            dataText = statSummary
+            dataText += statSummary
             # Read Stats
             self.TTSSpeakLanguage(dataText)
             self._currentState = DialogManager._dialogState["DefaultState"]
             return "None",[]
 
         else:
-            dataText = "How can I help you ?"
+            dataText += "How can I help you ?"
             # Ask how can i help
             self.TTSSpeakLanguage(dataText)
             self._currentState = DialogManager._dialogState["FAQs"]
             #time.sleep(5)
             transcribedSpeech = self.STTLanguage()
             if transcribedSpeech == "":
-                self.TTSSpeakLanguage("Sorry I did not catch that. i will stay quiet for now. If you need me, just toggle the start speech button on your Dashbaord.")
+                self.TTSSpeakLanguage("Sorry I did not catch that. If you need me, just toggle the start speech button on your Dashboard.")
+                intentName, msgArray = "None",[]
             else:
                 intent, entities = self.LUISUnderstand(transcribedSpeech)
                 intentName, msgArray = self.StateSwitcher(intent, entities)
@@ -215,6 +226,9 @@ class DialogManager:
             result = (currentDate.year, currentDate.month,
                       currentDate.day, currentDate.weekday())
             dataText = "Today is " + " " + DialogManager._days[result[3]] + " the " + DialogManager._dayNumber[result[2]] + " of " + DialogManager._month[result[1]] + " " + str(result[0])
+           # import string
+            #dataText = dataText.translate(None, string.punctuation)
+            #print dataText
             self.TTSSpeakLanguage(dataText)
 
     ######### State Switching fxns #############
@@ -229,7 +243,7 @@ class DialogManager:
 
             ordinal = int(next(iter( [entity.get("builtin.ordinal") for entity in entityParams if "builtin.ordinal" in entity.keys()]),"1"))
 
-            status = DialogManager._todoStatus.get(next(iter([entity.get("todoStatus") for entity in entityParams if "todoStatus" in entity.keys()]),"Open"))
+            status = DialogManager._todoStatus.get(next(iter([entity.get("todoStatus") for entity in entityParams if "todoStatus" in entity.keys()]),"Close"))
 
             if number == 0 and ordinal != 0:
                 number = ordinal
@@ -246,8 +260,8 @@ class DialogManager:
             self.TTSSpeakLanguage("Attempting to connect you to your Care Giver, please wait")
             wb.open_new_tab(scriptsDir)
             return intentName, []
-        elif intentName == "Communication.Confirm":
-            return intentName, []
+        # elif intentName == "Communication.Confirm":
+        #     return intentName, []
         elif intentName == "Date.Date":
             self.GetDateTime(intentName)
             return intentName, []
@@ -258,11 +272,11 @@ class DialogManager:
             if len(entityParams) == 0: entityParams = [{"exerciseType":"mental"}]
            
             if entityParams[0].get("exerciseType", "") == "mental":
-                 self.TTSSpeakLanguage("Redirecting you to a Brain Game Website. Please wait")
+                 self.TTSSpeakLanguage("Redirecting you to a Brain Game Website Please wait")
                  wb.open_new_tab(
                      "https://www.brain-games.co.uk/game/Brain+Trainer")
             else:
-                self.TTSSpeakLanguage("Redirecting you to a physical exercise online resource. Please wait")
+                self.TTSSpeakLanguage("Redirecting you to a exercise resource please wait")
                 wb.open_new_tab(
                     "https://www.nhs.uk/Tools/Documents/NHS_ExercisesForOlderPeople.pdf")
             return intentName, []
@@ -289,22 +303,21 @@ class DialogManager:
             msgArray = [crud, item, number, ordinal]
             self.TTSSpeakLanguage("Querying your To do list")
             return intentName, msgArray
-        elif intentName == "Translate.Translate":
-            return intentName, []
         elif intentName == "Weather.GetCondition":
             if len(entityParams) == 0: entityParams = [{"Weather.Location":"London"}]
-            self.TTSSpeakLanguage("Colatting the current weather conditions. Please wait")
+            self.TTSSpeakLanguage("Colatting current weather results, Please wait")
             weatherObservation = self._weatherObject.weather_at_place(
                 entityParams[0].get("Weather.Location", "London"))
             weather = weatherObservation.get_weather()
-            dataText = "The current weather has a  maximum temperature of " + str(weather.get_temperature('celsius')["temp_max"]) + ", a minimum temperature of " + str(weather.get_temperature(
-                'celsius')["temp_min"]) + ", an average temperature of " + str(weather.get_temperature('celsius')["temp"]) + ", all in celsius and a humidity of " + str(weather.get_humidity())
+            dataText = "The current weather has a temperature high of  " + str(int(weather.get_temperature('celsius')["temp_max"])) + ", a low of " + str(int(weather.get_temperature(
+                'celsius')["temp_min"])) + ", and an average of " + str(int(weather.get_temperature('celsius')["temp"])) + ", all in celsius and a humidity of " + str(weather.get_humidity())
+            
             self.TTSSpeakLanguage(dataText)
             return intentName, []
         elif intentName == "Weather.GetForecast":
             if len(entityParams) == 0: entityParams = [{"Weather.Location":"London"}]
             location = entityParams[0].get("Weather.Location", "")
-            self.TTSSpeakLanguage("Pulling up the weather forecast. please wait")
+            self.TTSSpeakLanguage("Pulling up updates for the weather, please wait")
             wb.open_new_tab(
                 "https://www.bing.com/search?q=bing+weather+forecast+" + location)
             return intentName, []
@@ -323,7 +336,11 @@ class DialogManager:
     def STTLanguage(self):
         self._sttObject.RecordSpeech()
         self._sttObject.TranscribeSpeech()
-        luisFeed = self._sttObject.GetTranscribedText()
+        import unidecode
+               
+        txt =  unidecode.unidecode(self._sttObject.GetTranscribedText())
+        print txt
+        luisFeed = txt #self._sttObject.GetTranscribedText()
         if luisFeed != "" :
             if self._language == "english":
                  return luisFeed

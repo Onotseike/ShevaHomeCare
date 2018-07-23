@@ -452,6 +452,8 @@ else
                     onChecked: function () {
                         window.startSTTData = true;
                         startSTTPublish();
+                        $(this).checkbox.checked = false;
+
 
                     },
                     onUnchecked: function() {

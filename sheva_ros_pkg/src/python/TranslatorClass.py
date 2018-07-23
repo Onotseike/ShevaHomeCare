@@ -1,4 +1,5 @@
-import httplib, urllib, uuid, json
+import httplib, urllib, uuid, json,string as strg
+from unidecode import unidecode
 
 class TranslatorClass:
     #Variables & Constants
@@ -22,8 +23,11 @@ class TranslatorClass:
 
     def TranslateText(self, language, dataText):
         self.params = "&to=" + language
-
-        _requestBody = [{ 'Text' : dataText}]
+        # data = unidecode( dataText)
+        # print data
+        import string
+        txt = str(dataText).translate(None, string.punctuation)
+        _requestBody = [{ 'Text' : txt}]
         _requestBody = json.dumps(_requestBody, ensure_ascii=False).encode('utf-8')
         
         _connection = httplib.HTTPSConnection(self.host)
@@ -38,7 +42,7 @@ class TranslatorClass:
 
 def main():
     testClass = TranslatorClass()
-    result =testClass.TranslateText("es", "Hello, My Name is Paula")
+    result =testClass.TranslateText("en", "Cual es la fecha del, My Name is Paula")
     
     print result
 

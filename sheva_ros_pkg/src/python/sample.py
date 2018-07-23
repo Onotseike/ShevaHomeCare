@@ -4,6 +4,7 @@
 import rospy
 import os 
 import sys
+import webbrowser as wb
 
 from std_msgs.msg import String
 from std_msgs.msg import Bool
@@ -18,9 +19,13 @@ from TTSClass import TTSClass
 global numItems, notDoneItems, mealName, drugName, exerciseName, miscName, miscDes
 global langSelect, startSTT,dataText
 global onLogin
+onLogin = False
 
 global _dialogManager
 _dialogManager = DialogManager("english")
+path = os.path.dirname(os.path.realpath(__file__))
+mainPage =os.path.join(path,"..","..","scripts","Index.html")
+wb.open_new(mainPage)
 #ttsObject = TTSClass()
 #sttObject = STTClass()
 
@@ -76,8 +81,8 @@ def IntroDataCallBack(data):
     print dataText
     if _dialogManager == None:
             _dialogManager = DialogManager(langSelect)
-    #if onLogin == True:
-        #_dialogManager.SetCurrentSate("LoginState")
+    if onLogin == True:
+        _dialogManager.SetCurrentSate("LoginState")
     intentName, msgArray = _dialogManager.IntroGreeting("Paula", dataText)
     if intentName == "CRUDTodolist" or intentName == "QueryTodoList":
         queryArray = Int32MultiArray(data=msgArray)
@@ -89,9 +94,7 @@ def IntroDataCallBack(data):
 
     else:
         _dialogManager.SetCurrentSate("DefaultState")
-    #Execute Action based on intentName
-    #_dialogManager.TTSSpeakLanguage(dataText)
-    #TTSSpeak()
+    onLogin = False
 
 def StartSTTDataCallback(data):
     global _dialogManager, langSelect
@@ -106,6 +109,9 @@ def StartSTTDataCallback(data):
         if luisFeed == "":
             _dialogManager.TTSSpeakLanguage("My Apologies, I could not understand what was said. Try again.")
             intentName, msgArray = "None", []
+            luisFeed = _dialogManager.STTLanguage()
+            intentName, entityParams = _dialogManager.LUISUnderstand(_dialogManager.TransLateText("english",luisFeed))
+            intentName, msgArray = _dialogManager.StateSwitcher(intentName, entityParams)
         else:
             intentName, entityParams = _dialogManager.LUISUnderstand(_dialogManager.TransLateText("english",luisFeed))
             intentName, msgArray = _dialogManager.StateSwitcher(intentName, entityParams)
@@ -121,19 +127,22 @@ def StartSTTDataCallback(data):
 
         else:
             pass
-        #sttObject.RecordSpeech()
-        #sttObject.TranscribeSpeech()
-        #sttObject.GetTranscribedText()
-        #sttObject.TranscribeSpeechWebSocket()
-        #sttObject.GetTranscribedText()
+       
         
 def QueryResultCallBack(data):
     global dataText, _dialogManager, onLogin
     rospy.loginfo(rospy.get_caller_id() + "Echoed %s", data.data)
     dataText = data.data
     print dataText
-    _dialogManager.TTSSpeakLanguage(dataText)
+    try:
+        import string
+        print _dialogManager.GetCurrentLanguage()
+        txt = str(dataText).translate(None,string.punctuation)
+        _dialogManager.TTSSpeakLanguage(txt)
     
+    except Exception as identifier:
+        _dialogManager.TTSSpeakEnglish(dataText)
+   
     
   
 
@@ -147,22 +156,22 @@ def ROSSetup():
         '/todoListQueryPublisher', Int32MultiArray, queue_size=10)
     languangeChangePublisher = rospy.Publisher("/LanguageChangePublisher", String, queue_size=10)
 
-    langSubscriber = rospy.Subscriber("/LangPublisher", String, LangDataCallBack)
+    rospy.Subscriber("/LangPublisher", String, LangDataCallBack)
 
-    itemsSubscriber = rospy.Subscriber("/ItemsPublisher",Int32MultiArray,ItemsDataCallBack)
+    rospy.Subscriber("/ItemsPublisher",Int32MultiArray,ItemsDataCallBack)
     #print 1
-    drugSubscriber = rospy.Subscriber("/DrugPublisher",String,DrugDataCallBack)
+    rospy.Subscriber("/DrugPublisher",String,DrugDataCallBack)
     #print 2
-    mealSubscriber = rospy.Subscriber("/MealPublisher",String,MealDataCallBack)
+    rospy.Subscriber("/MealPublisher",String,MealDataCallBack)
     #print 3
-    exerciseSubscriber = rospy.Subscriber("/ExercisePublisher",String,ExerciseDataCallBack)
+    rospy.Subscriber("/ExercisePublisher",String,ExerciseDataCallBack)
     #print 4
-    miscSubscriber = rospy.Subscriber("/MiscPublisher",String,MiscDataCallBack)  
+    rospy.Subscriber("/MiscPublisher",String,MiscDataCallBack)  
 
-    introSubscriber = rospy.Subscriber("/IntroPublisher",String,IntroDataCallBack)  
+    rospy.Subscriber("/IntroPublisher",String,IntroDataCallBack)  
     #print 5
     
-    sttSubscriber = rospy.Subscriber("/StartSTTPublisher", Bool, StartSTTDataCallback)
+    rospy.Subscriber("/StartSTTPublisher", Bool, StartSTTDataCallback)
     rospy.Subscriber("/QueryResultPublisher", String, QueryResultCallBack)
     
     onLogin = True
@@ -171,14 +180,14 @@ def ROSSetup():
     
     rospy.spin()
 
-def TTSSpeak():
-    global dataText
-    #print dataText
-    ttsResponse,data = ttsObject.GetTTSData(dataText)
-    while ttsResponse.status != 200:
-        ttsObject.ReAuthenticate()
-        ttsResponse,data = ttsObject.GetTTSData(dataText)
-    ttsObject.TTSSpeak(ttsResponse,data)
+# def TTSSpeak():
+#     global dataText
+#     #print dataText
+#     ttsResponse,data = ttsObject.GetTTSData(dataText)
+#     while ttsResponse.status != 200:
+#         ttsObject.ReAuthenticate()
+#         ttsResponse,data = ttsObject.GetTTSData(dataText)
+#     ttsObject.TTSSpeak(ttsResponse,data)
 
 def TodoListPublish(data):
     global todoListQueryPublisher

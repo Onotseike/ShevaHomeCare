@@ -2,7 +2,7 @@
 //SDK = require
 //SDK = require(['~/lib/microsoft-speech-browser-sdk/distrib/Speech.Browser.Sdk.js']);
 //var robotURL = 'ws://localhost:9090';
-var robotURL = 'ws://172.20.10.2:9090'; //192.168.0.108
+var robotURL = 'ws://172.20.10.2:9090'; //192.168.0.108 172.20.10.2
 
 var numOfTodoItems = parseInt($('h5#itemsNum').text());
 var numOfNotDoneItems = parseInt($('h5#notItemsNum').text());
@@ -41,6 +41,7 @@ ros.on('error', function (error) {
 });
 ros.on('close', function () {
     console.log('Connection to web socket server closed.');
+    ros.connect(robotURL); 
 });
 
 //ROS Publishers
@@ -177,6 +178,9 @@ sttListener = new ROSLIB.Topic({
 startSTTData = false;
 
 function startSTTPublish() {
+    if (ros.connected) {
+        
+    }
     console.log("Sending Start STT DATA");
     console.log(startSTTData);
     var sttData = new ROSLIB.Message({

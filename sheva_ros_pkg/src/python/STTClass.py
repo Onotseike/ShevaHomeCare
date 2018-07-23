@@ -74,7 +74,7 @@ class STTClass:
       
 
 def main():
-    testClass = STTClass("english")
+    testClass = STTClass("spanish")
     #testClass.RecordSpeech()
     testClass.TranscribeSpeech()
     testClass.GetTranscribedText()
